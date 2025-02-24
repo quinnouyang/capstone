@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "name": "emcc",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "includePath": ["/opt/homebrew/Cellar/emscripten/4.0.1/libexec/**"]
+    }
+  ],
+  "version": 4
+}
