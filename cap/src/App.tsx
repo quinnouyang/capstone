@@ -1,7 +1,11 @@
+import "./index.css";
+import CustomNodeFlow from "./components/CustomNodeFlow";
+
 export default function App() {
   return (
-    <>
-      <h1>Vite + React</h1>
-    </>
+    <div id="app">
+      <h1>MVP</h1>
+      <CustomNodeFlow />
+    </div>
   );
 }
