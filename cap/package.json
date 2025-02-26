@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "all": "pnpm check && pnpm lint && pnpm format && pnpm build",
-    "build": "vite build",
-    "check": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
-    "format": "prettier . --write",
+    "compile": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
     "lint": "eslint .",
+    "format": "prettier . --write",
+    "all": "pnpm compile && pnpm lint && pnpm format",
+    "build": "vite build",
+    "dev": "vite",
     "preview": "vite preview"
   },
   "dependencies": {
