@@ -1,11 +1,15 @@
-import "./index.css";
-import CustomNodeFlow from "./components/CustomNodeFlow";
+import { Box, Theme } from "@chakra-ui/react";
+import NodeCanvas from "./components/NodeCanvas";
+import { Provider } from "./components/ui/provider";
 
 export default function App() {
   return (
-    <div id="app">
-      <h1>MVP</h1>
-      <CustomNodeFlow />
-    </div>
+    <Provider>
+      <Theme appearance="light">
+        <Box width="100vw" height="100vh">
+          <NodeCanvas />
+        </Box>
+      </Theme>
+    </Provider>
   );
 }
