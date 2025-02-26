@@ -1,90 +1,81 @@
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, MouseEvent, useState } from "react";
 import {
   ReactFlow,
   useNodesState,
   useEdgesState,
-  addEdge,
   MiniMap,
   Controls,
   Node,
   Edge,
   Position,
-  Connection,
+  useReactFlow,
+  XYPosition,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import AudioTrackNode from "./AudioTrackNode";
+import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
 
-const INITIAL_NODES: Node[] = [
-  {
-    id: "1",
+function initEmptyNode(
+  n: number,
+  position?: XYPosition,
+): Node<AudioTrackNodeData> {
+  return {
+    id: String(n),
     type: "audioTrackNode",
     data: {
-      label: "AUDIO_TRACK_LABEL_1",
-      src: "AUDIO_TRACK_SRC_1",
-      onChange: undefined,
+      label: `Audio Track ${String(n)}`,
     },
-    position: { x: 0, y: 0 },
+    position: position ?? { x: n * 400, y: 0 }, // [TODO] Un-hard code
     sourcePosition: Position.Left,
     targetPosition: Position.Right,
-  },
-  {
-    id: "2",
-    type: "audioTrackNode",
-    data: {
-      label: "AUDIO_TRACK_LABEL_2",
-      src: "AUDIO_TRACK_SRC_2",
-      onChange: undefined,
-    },
-    position: { x: 400, y: 0 },
-    sourcePosition: Position.Left,
-    targetPosition: Position.Right,
-  },
-];
-
-const INITIAL_EDGES: Edge[] = [];
+  };
+}
 
 const NodeCanvas = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(
-    INITIAL_NODES.map((node) => {
-      return {
-        ...node,
-        data: {
-          ...node.data,
-          onChange: (e: ChangeEvent<HTMLInputElement>) => {
-            const files = e.target.files;
-            if (files === null) return;
+  const [count, setCount] = useState(1);
+  const [nodes, setNodes, onNodesChange] = useNodesState<
+    Node<AudioTrackNodeData>
+  >([supplyOnChange(initEmptyNode(1))]); // [TODO] Position in center
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments
+  const [edges, , onEdgesChange] = useEdgesState<Edge>([]);
+  const { addNodes } = useReactFlow<Node<AudioTrackNodeData>>();
 
-            const src = URL.createObjectURL(files[0]);
+  function supplyOnChange(node: Node<AudioTrackNodeData>) {
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => {
+          const files = e.target.files;
+          if (files === null) return;
 
-            setNodes((nds) =>
-              nds.map((n) => {
-                if (n.id !== node.id) return n;
+          const src = URL.createObjectURL(files[0]);
 
-                return {
-                  ...n,
-                  data: {
-                    ...n.data,
-                    src,
-                    label: files[0].name,
-                  },
-                };
-              }),
-            );
-          },
+          setNodes((nds) =>
+            nds.map((n) => {
+              if (n.id !== node.id) return n;
+
+              return {
+                ...n,
+                data: {
+                  ...n.data,
+                  src,
+                  label: files[0].name,
+                },
+              };
+            }),
+          );
         },
-      };
-    }),
-  );
-  const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
+      },
+    };
+  }
 
-  const onConnect = useCallback(
-    (params: Connection) => {
-      setEdges((eds: Edge[]) =>
-        addEdge<Edge>({ ...params, animated: true }, eds),
-      );
-    },
-    [setEdges],
-  );
+  // [TODO] Adjust to canvas resizing and do not register mouse drags
+  function onPaneClick(e: MouseEvent) {
+    addNodes(
+      supplyOnChange(initEmptyNode(count + 1, { x: e.clientX, y: e.clientY })),
+    );
+    setCount((count) => ++count);
+  }
 
   return (
     <ReactFlow
@@ -92,11 +83,11 @@ const NodeCanvas = () => {
       edges={edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
+      onPaneClick={onPaneClick}
       nodeTypes={{
         audioTrackNode: AudioTrackNode,
       }}
-      fitView
+      // fitView
       proOptions={{ hideAttribution: true }}
       style={{ backgroundColor: "white" }}
     >
