@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { ChangeEvent, useCallback } from "react";
 import {
   ReactFlow,
   useNodesState,
@@ -21,6 +21,7 @@ const INITIAL_NODES: Node[] = [
     data: {
       label: "AUDIO_TRACK_LABEL_1",
       src: "AUDIO_TRACK_SRC_1",
+      onChange: undefined,
     },
     position: { x: 0, y: 0 },
     sourcePosition: Position.Left,
@@ -32,6 +33,7 @@ const INITIAL_NODES: Node[] = [
     data: {
       label: "AUDIO_TRACK_LABEL_2",
       src: "AUDIO_TRACK_SRC_2",
+      onChange: undefined,
     },
     position: { x: 400, y: 0 },
     sourcePosition: Position.Left,
@@ -42,7 +44,37 @@ const INITIAL_NODES: Node[] = [
 const INITIAL_EDGES: Edge[] = [];
 
 const NodeCanvas = () => {
-  const [nodes, , onNodesChange] = useNodesState<Node>(INITIAL_NODES);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(
+    INITIAL_NODES.map((node) => {
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          onChange: (e: ChangeEvent<HTMLInputElement>) => {
+            const files = e.target.files;
+            if (files === null) return;
+
+            const src = URL.createObjectURL(files[0]);
+
+            setNodes((nds) =>
+              nds.map((n) => {
+                if (n.id !== node.id) return n;
+
+                return {
+                  ...n,
+                  data: {
+                    ...n.data,
+                    src,
+                    label: files[0].name,
+                  },
+                };
+              }),
+            );
+          },
+        },
+      };
+    }),
+  );
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
 
   const onConnect = useCallback(
