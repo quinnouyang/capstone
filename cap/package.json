@@ -9,8 +9,8 @@
     "format": "prettier . --write --cache --cache-location configs/.prettier-cache",
     "all": "pnpm compile && pnpm lint && pnpm format",
     "debug": "pnpm compile --verbose && pnpm lint --debug && pnpm format",
-    "build": "vite build",
-    "dev": "vite",
+    "build": "vite build -c configs/vite.config.ts",
+    "dev": "vite -c configs/vite.config.ts",
     "preview": "vite preview"
   },
   "dependencies": {
