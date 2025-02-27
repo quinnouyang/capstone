@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "compile": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
-    "lint": "eslint .",
-    "format": "prettier . --write",
+    "compile": "tsc -b configs/tsconfig.json",
+    "lint": "eslint -c configs/eslint.config.js --cache --cache-location configs/.eslintcache",
+    "format": "prettier . --write --cache --cache-location configs/.prettier-cache",
     "all": "pnpm compile && pnpm lint && pnpm format",
+    "debug": "pnpm compile --verbose && pnpm lint --debug && pnpm format",
     "build": "vite build",
     "dev": "vite",
     "preview": "vite preview"

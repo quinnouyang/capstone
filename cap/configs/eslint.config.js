@@ -13,14 +13,13 @@ export default tseslint.config(
       },
     },
   },
-  { ignores: ["dist"] },
   {
+    files: ["../src"],
     extends: [
       js.configs.recommended,
       ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
     ],
-    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
