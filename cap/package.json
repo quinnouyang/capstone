@@ -5,10 +5,14 @@
   "type": "module",
   "scripts": {
     "compile": "tsc -b configs/tsconfig.json",
-    "lint": "eslint -c configs/eslint.config.js --cache --cache-location configs/.eslintcache",
-    "format": "prettier . --write --cache --cache-location configs/.prettier-cache",
-    "all": "pnpm compile && pnpm lint && pnpm format",
-    "debug": "pnpm compile --verbose && pnpm lint --debug && pnpm format",
+    "compile-v": "pnpm run compile --verbose --listFiles",
+    "lint": "eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache",
+    "lint-v": "pnpm run lint --debug",
+    "_format": "prettier . --cache --cache-location cache/.prettier-cache",
+    "format": "pnpm run _format --list-different --write",
+    "format-v": "pnpm run _format --log-level debug --write",
+    "all": "pnpm run compile && pnpm run lint && pnpm run format",
+    "all-v": "pnpm run compile-v && pnpm run lint-v && pnpm run format-v",
     "build": "vite build -c configs/vite.config.ts",
     "dev": "vite -c configs/vite.config.ts",
     "preview": "vite preview"
