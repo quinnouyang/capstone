@@ -7,18 +7,18 @@ import {
   Controls,
   Node,
   Edge,
-  // Position,
   useReactFlow,
   XYPosition,
   addEdge,
   NodeOrigin,
   OnConnectEnd,
   OnConnect,
+  SelectionMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
 
-const NODE_ORIGIN: NodeOrigin = [0.5, 0];
+const NODE_ORIGIN: NodeOrigin = [0, 0.5];
 
 function initEmptyNode(
   n: number,
@@ -29,20 +29,29 @@ function initEmptyNode(
     type: "audioTrackNode",
     data: { label: `Audio Track ${String(n)}` },
     position: position,
-    // sourcePosition: Position.Left,
-    // targetPosition: Position.Right,
     origin: NODE_ORIGIN,
   };
 }
 
-let count = 1;
+// id = count - 1;
+let nodeId = 2;
+let edgeId = 1;
 
 export default function NodeCanvas() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<
     Node<AudioTrackNodeData>
-  >([supplyOnChange(initEmptyNode(1, { x: 0, y: 0 }))]); // [TODO] Position in center
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  >(
+    [
+      initEmptyNode(0, { x: 0, y: 0 }),
+      initEmptyNode(1, { x: 800, y: 200 }),
+      initEmptyNode(2, { x: 800, y: -200 }),
+    ].map((n) => supplyOnChange(n)),
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([
+    { id: "0", source: "0", target: "1" },
+    { id: "1", source: "0", target: "2" },
+  ]);
   const { addNodes, screenToFlowPosition } = useReactFlow<
     Node<AudioTrackNodeData>,
     Edge
@@ -83,7 +92,7 @@ export default function NodeCanvas() {
   function onPaneClick(e: MouseEvent) {
     addNodes(
       // [TODO] Consider useMousePositlion: https://www.joshwcomeau.com/snippets/react-hooks/use-mouse-position/
-      supplyOnChange(initEmptyNode(++count, { x: e.clientX, y: e.clientY })),
+      supplyOnChange(initEmptyNode(++nodeId, { x: e.clientX, y: e.clientY })),
     );
   }
 
@@ -94,14 +103,13 @@ export default function NodeCanvas() {
 
   const onConnectEnd = useCallback<OnConnectEnd>(
     (event, connectionState) => {
-      // Skip if connection ends on a node (isValid) or does not originate from a node
-      if (connectionState.isValid || !connectionState.fromNode) {
-        console.log("Skipping!");
-        return;
-      }
+      // Skip if connection ends on a node (isValid) or no connection is in process (somehow)
+      if (connectionState.isValid || !connectionState.fromNode) return;
 
-      const id = connectionState.fromNode.id;
-      ++count;
+      const sourceId = connectionState.fromNode.id;
+
+      ++nodeId;
+      ++edgeId;
 
       const { clientX, clientY } =
         "changedTouches" in event ? event.changedTouches[0] : event;
@@ -109,7 +117,7 @@ export default function NodeCanvas() {
       setNodes((nds) =>
         nds.concat(
           initEmptyNode(
-            count,
+            nodeId,
             screenToFlowPosition({
               x: clientX,
               y: clientY,
@@ -120,16 +128,10 @@ export default function NodeCanvas() {
 
       setEdges((eds) =>
         eds.concat({
-          id: String(count),
-          source: id,
-          target: String(count),
+          id: String(edgeId),
+          source: sourceId,
+          target: String(nodeId),
         }),
-      );
-
-      console.log(
-        count,
-        nodes.map((n) => n.id),
-        edges.map((e) => e.id),
       );
     },
     [screenToFlowPosition, setNodes, setEdges],
@@ -140,6 +142,8 @@ export default function NodeCanvas() {
       ref={ref}
       nodes={nodes}
       edges={edges}
+      fitView
+      fitViewOptions={{ maxZoom: 1 }}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
@@ -148,12 +152,11 @@ export default function NodeCanvas() {
       nodeTypes={{
         audioTrackNode: AudioTrackNode,
       }}
-      fitView
       panOnScroll
       selectionOnDrag
+      selectionMode={SelectionMode.Partial}
       zoomOnDoubleClick={false}
       proOptions={{ hideAttribution: true }}
-      style={{ backgroundColor: "white" }}
     >
       <MiniMap />
       <Controls style={{ color: "gray" }} />

@@ -2,7 +2,6 @@ import { ChangeEvent, memo } from "react";
 import { Handle, Node, NodeProps, Position } from "@xyflow/react";
 import { Stack } from "@chakra-ui/react";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type AudioTrackNodeData = {
   label: string;
   src?: string;
@@ -14,11 +13,11 @@ const AudioTrackNode = memo(({ data }: NodeProps<Node<AudioTrackNodeData>>) => {
     <Stack
       color="black"
       bgColor="white"
-      rounded={4}
-      borderWidth={1}
+      rounded={16}
+      borderWidth={2}
       borderColor={"black"}
       p={4}
-      gap={2}
+      gap={4}
     >
       <Handle type="target" position={Position.Left} />
       <input
@@ -28,8 +27,7 @@ const AudioTrackNode = memo(({ data }: NodeProps<Node<AudioTrackNodeData>>) => {
         onChange={data.onChange}
       />
       <audio controls src={data.src}></audio>
-      <Handle type="source" position={Position.Right} id="a" />
-      <Handle type="source" position={Position.Right} id="b" />
+      <Handle type="source" position={Position.Right} />
     </Stack>
   );
 });
