@@ -8,30 +8,17 @@ import {
   Node,
   Edge,
   useReactFlow,
-  XYPosition,
   addEdge,
-  NodeOrigin,
   OnConnectEnd,
   OnConnect,
   SelectionMode,
+  type XYPosition,
+  type NodeOrigin,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
 
 const NODE_ORIGIN: NodeOrigin = [0, 0.5];
-
-function initEmptyNode(
-  n: number,
-  position: XYPosition,
-): Node<AudioTrackNodeData> {
-  return {
-    id: String(n),
-    type: "audioTrackNode",
-    data: { label: `Audio Track ${String(n)}` },
-    position: position,
-    origin: NODE_ORIGIN,
-  };
-}
 
 // id = count - 1;
 let nodeId = 2;
@@ -41,13 +28,11 @@ export default function NodeCanvas() {
   const ref = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<
     Node<AudioTrackNodeData>
-  >(
-    [
-      initEmptyNode(0, { x: 0, y: 0 }),
-      initEmptyNode(1, { x: 800, y: 200 }),
-      initEmptyNode(2, { x: 800, y: -200 }),
-    ].map((n) => supplyOnChange(n)),
-  );
+  >([
+    initNode("0", { x: 0, y: 0 }),
+    initNode("1", { x: 800, y: 200 }),
+    initNode("2", { x: 800, y: -200 }),
+  ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([
     { id: "0", source: "0", target: "1" },
     { id: "1", source: "0", target: "2" },
@@ -57,33 +42,36 @@ export default function NodeCanvas() {
     Edge
   >();
 
-  function supplyOnChange(node: Node<AudioTrackNodeData>) {
+  function initNode(
+    id: string,
+    position: XYPosition,
+  ): Node<AudioTrackNodeData> {
     return {
-      ...node,
+      id,
+      position: position,
       data: {
-        ...node.data,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => {
-          const files = e.target.files;
-          if (files === null) return;
+        onInputChange: ({
+          target: { files },
+        }: ChangeEvent<HTMLInputElement>) => {
+          if (!files || !files[0]) return;
 
-          const src = URL.createObjectURL(files[0]);
-
+          // Update `src` in state of corresponding node
+          // See https://reactflow.dev/examples/nodes/update-node
+          // and https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
           setNodes((nds) =>
-            nds.map((n) => {
-              if (n.id !== node.id) return n;
-
-              return {
-                ...n,
-                data: {
-                  ...n.data,
-                  src,
-                  label: files[0].name,
-                },
-              };
-            }),
+            nds.map((n) =>
+              n.id === id
+                ? {
+                    ...n,
+                    data: { ...n.data, src: URL.createObjectURL(files[0]) },
+                  }
+                : n,
+            ),
           );
         },
       },
+      type: "audioTrackNode",
+      origin: NODE_ORIGIN,
     };
   }
 
@@ -92,7 +80,7 @@ export default function NodeCanvas() {
   function onPaneClick(e: MouseEvent) {
     addNodes(
       // [TODO] Consider useMousePositlion: https://www.joshwcomeau.com/snippets/react-hooks/use-mouse-position/
-      supplyOnChange(initEmptyNode(++nodeId, { x: e.clientX, y: e.clientY })),
+      initNode(String(++nodeId), { x: e.clientX, y: e.clientY }),
     );
   }
 
@@ -116,8 +104,8 @@ export default function NodeCanvas() {
 
       setNodes((nds) =>
         nds.concat(
-          initEmptyNode(
-            nodeId,
+          initNode(
+            String(nodeId),
             screenToFlowPosition({
               x: clientX,
               y: clientY,
