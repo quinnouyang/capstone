@@ -17,6 +17,9 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
+import { IconButton } from "@chakra-ui/react";
+import { BiPause, BiPlay } from "react-icons/bi";
+import { useColorMode } from "./ui/color-mode";
 
 const NODE_ORIGIN: NodeOrigin = [0, 0.5];
 
@@ -25,6 +28,8 @@ let nodeId = 2;
 let edgeId = 1;
 
 export default function NodeCanvas() {
+  const { colorMode } = useColorMode();
+
   const ref = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<
     Node<AudioTrackNodeData>
@@ -128,6 +133,7 @@ export default function NodeCanvas() {
   return (
     <ReactFlow
       ref={ref}
+      colorMode={colorMode}
       nodes={nodes}
       edges={edges}
       fitView
