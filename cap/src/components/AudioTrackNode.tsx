@@ -1,6 +1,13 @@
 import { ChangeEvent, memo } from "react";
-import { Handle, Node, NodeProps, Position } from "@xyflow/react";
-import { Stack } from "@chakra-ui/react";
+import {
+  Handle,
+  Node,
+  NodeProps,
+  NodeResizer,
+  NodeToolbar,
+  Position,
+} from "@xyflow/react";
+import { Button, Stack } from "@chakra-ui/react";
 
 export type AudioTrackNodeData = {
   src?: string;
@@ -8,7 +15,10 @@ export type AudioTrackNodeData = {
 };
 
 const AudioTrackNode = memo(
-  ({ data: { src, onInputChange } }: NodeProps<Node<AudioTrackNodeData>>) => {
+  ({
+    data: { src, onInputChange },
+    selected,
+  }: NodeProps<Node<AudioTrackNodeData>>) => {
     return (
       <Stack
         color="black"
@@ -29,6 +39,10 @@ const AudioTrackNode = memo(
           position={Position.Right}
           isConnectableEnd={false}
         />
+        <NodeToolbar>
+          <Button>TEST</Button>
+        </NodeToolbar>
+        <NodeResizer isVisible={selected} />
         <input
           type="file"
           id="audioTrack"

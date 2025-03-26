@@ -17,8 +17,6 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
-import { IconButton } from "@chakra-ui/react";
-import { BiPause, BiPlay } from "react-icons/bi";
 import { useColorMode } from "./ui/color-mode";
 
 const NODE_ORIGIN: NodeOrigin = [0, 0.5];
