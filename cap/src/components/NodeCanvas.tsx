@@ -48,7 +48,7 @@ export default function NodeCanvas() {
   ): Node<AudioTrackNodeData> {
     return {
       id,
-      position: position,
+      position,
       data: {
         onInputChange: ({
           target: { files },
@@ -86,7 +86,7 @@ export default function NodeCanvas() {
 
   const onConnect = useCallback<OnConnect>(
     (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges],
+    [setEdges, addEdge],
   );
 
   const onConnectEnd = useCallback<OnConnectEnd>(

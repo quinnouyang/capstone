@@ -19,7 +19,16 @@ const AudioTrackNode = memo(
         p={4}
         gap={4}
       >
-        <Handle type="target" position={Position.Left} />
+        <Handle
+          type="target"
+          position={Position.Left}
+          isConnectableStart={false}
+        />
+        <Handle
+          type="source"
+          position={Position.Right}
+          isConnectableEnd={false}
+        />
         <input
           type="file"
           id="audioTrack"
@@ -27,7 +36,6 @@ const AudioTrackNode = memo(
           onChange={onInputChange}
         />
         <audio controls src={src}></audio>
-        <Handle type="source" position={Position.Right} />
       </Stack>
     );
   },
