@@ -11,9 +11,11 @@ import "./index.css";
 import NodeInspector from "./NodeInspector";
 import ChangeLogger from "./ChangeLogger";
 import ViewportLogger from "./ViewportLogger";
+import EdgeInspector from "./EdgeInspector";
 
 export default function DevTools() {
   const [nodeInspectorActive, setNodeInspectorActive] = useState(true);
+  const [edgeInspectorActive, setEdgeInspectorActive] = useState(true);
   const [changeLoggerActive, setChangeLoggerActive] = useState(true);
   const [viewportLoggerActive, setViewportLoggerActive] = useState(true);
 
@@ -26,6 +28,13 @@ export default function DevTools() {
           title="Toggle Node Inspector"
         >
           Node Inspector
+        </DevToolButton>
+        <DevToolButton
+          setActive={setEdgeInspectorActive}
+          active={edgeInspectorActive}
+          title="Toggle Edge Inspector"
+        >
+          Edge Inspector
         </DevToolButton>
         <DevToolButton
           setActive={setChangeLoggerActive}
@@ -44,6 +53,7 @@ export default function DevTools() {
       </Panel>
       {changeLoggerActive && <ChangeLogger />}
       {nodeInspectorActive && <NodeInspector />}
+      {edgeInspectorActive && <EdgeInspector />}
       {viewportLoggerActive && <ViewportLogger />}
     </div>
   );
