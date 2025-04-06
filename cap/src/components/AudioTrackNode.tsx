@@ -8,6 +8,7 @@ import {
   Position,
 } from "@xyflow/react";
 import { Button, Stack } from "@chakra-ui/react";
+import { FileInput, FileUploadRoot } from "./ui/file-upload";
 
 export type AudioTrackNodeData = {
   src?: string;
@@ -43,12 +44,13 @@ const AudioTrackNode = memo(
           <Button>TEST</Button>
         </NodeToolbar>
         <NodeResizer isVisible={selected} />
-        <input
-          type="file"
+        <FileUploadRoot
           id="audioTrack"
           accept="audio/*"
           onChange={onInputChange}
-        />
+        >
+          <FileInput />
+        </FileUploadRoot>
         <audio controls src={src}></audio>
       </Stack>
     );
