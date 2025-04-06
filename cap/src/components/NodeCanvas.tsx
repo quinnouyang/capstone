@@ -18,6 +18,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
 import { useColorMode } from "./ui/color-mode";
+import DevTools from "./debug/Devtools";
 
 const NODE_ORIGIN: NodeOrigin = [0, 0.5];
 
@@ -152,6 +153,7 @@ export default function NodeCanvas() {
     >
       <MiniMap />
       <Controls style={{ color: "gray" }} />
+      <DevTools />
     </ReactFlow>
   );
 }
