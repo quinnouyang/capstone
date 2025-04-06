@@ -19,12 +19,12 @@ import "@xyflow/react/dist/style.css";
 import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
 import { useColorMode } from "./ui/color-mode";
 import DevTools from "./debug/Devtools";
+import { extendId } from "./utils";
 
 const NODE_ORIGIN: NodeOrigin = [0, 0.5];
 
-// id = count - 1;
-let nodeId = 2;
-let edgeId = 1;
+let nodeCount = 2;
+let edgeCount = 1;
 
 export default function NodeCanvas() {
   const { colorMode } = useColorMode();
@@ -33,23 +33,22 @@ export default function NodeCanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState<
     Node<AudioTrackNodeData>
   >([
-    initNode("0", { x: 0, y: 0 }),
-    initNode("1", { x: 800, y: 200 }),
-    initNode("2", { x: 800, y: -200 }),
+    initNode(0, { x: 0, y: 0 }),
+    initNode(1, { x: 800, y: 200 }),
+    // initNode("2", { x: 800, y: -200 }),
   ]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([
     { id: "0", source: "0", target: "1" },
-    { id: "1", source: "0", target: "2" },
+    // { id: "1", source: "0", target: "2" },
   ]);
   const { addNodes, screenToFlowPosition } = useReactFlow<
     Node<AudioTrackNodeData>,
     Edge
   >();
 
-  function initNode(
-    id: string,
-    position: XYPosition,
-  ): Node<AudioTrackNodeData> {
+  function initNode(i: number, position: XYPosition): Node<AudioTrackNodeData> {
+    const id = extendId(String(i));
+
     return {
       id,
       position,
@@ -57,7 +56,10 @@ export default function NodeCanvas() {
         onInputChange: ({
           target: { files },
         }: ChangeEvent<HTMLInputElement>) => {
-          if (!files || !files[0]) return;
+          if (!files || !files[0]) {
+            console.warn("No file selected");
+            return;
+          }
 
           // Update `src` in state of corresponding node
           // See https://reactflow.dev/examples/nodes/update-node
@@ -84,7 +86,7 @@ export default function NodeCanvas() {
   function onPaneClick(e: MouseEvent) {
     addNodes(
       // [TODO] Consider useMousePositlion: https://www.joshwcomeau.com/snippets/react-hooks/use-mouse-position/
-      initNode(String(++nodeId), { x: e.clientX, y: e.clientY }),
+      initNode(++nodeCount, { x: e.clientX, y: e.clientY }),
     );
   }
 
@@ -100,8 +102,8 @@ export default function NodeCanvas() {
 
       const sourceId = connectionState.fromNode.id;
 
-      ++nodeId;
-      ++edgeId;
+      ++nodeCount;
+      ++edgeCount;
 
       const { clientX, clientY } =
         "changedTouches" in event ? event.changedTouches[0] : event;
@@ -109,7 +111,7 @@ export default function NodeCanvas() {
       setNodes((nds) =>
         nds.concat(
           initNode(
-            String(nodeId),
+            nodeCount,
             screenToFlowPosition({
               x: clientX,
               y: clientY,
@@ -120,9 +122,9 @@ export default function NodeCanvas() {
 
       setEdges((eds) =>
         eds.concat({
-          id: String(edgeId),
+          id: String(edgeCount),
           source: sourceId,
-          target: String(nodeId),
+          target: String(nodeCount),
         }),
       );
     },

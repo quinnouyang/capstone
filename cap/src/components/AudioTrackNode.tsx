@@ -1,4 +1,4 @@
-import { ChangeEvent, memo } from "react";
+import { ChangeEvent, memo, useEffect, useId, useRef } from "react";
 import {
   Handle,
   Node,
@@ -9,6 +9,8 @@ import {
 } from "@xyflow/react";
 import { Button, Stack } from "@chakra-ui/react";
 import { FileInput, FileUploadRoot } from "./ui/file-upload";
+import { createAudioNodeSource } from "../engine/core";
+import { extendId } from "./utils";
 
 export type AudioTrackNodeData = {
   src?: string;
@@ -20,6 +22,17 @@ const AudioTrackNode = memo(
     data: { src, onInputChange },
     selected,
   }: NodeProps<Node<AudioTrackNodeData>>) => {
+    const ref = useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+      if (!ref.current) {
+        console.warn("AudioTrackNode: ref is null");
+        return;
+      }
+
+      createAudioNodeSource(ref.current);
+    }, []);
+
     return (
       <Stack
         color="black"
@@ -51,7 +64,7 @@ const AudioTrackNode = memo(
         >
           <FileInput />
         </FileUploadRoot>
-        <audio controls src={src}></audio>
+        <audio ref={ref} id={extendId(src, useId())} controls src={src}></audio>
       </Stack>
     );
   },
