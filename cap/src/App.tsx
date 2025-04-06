@@ -5,7 +5,7 @@ import { ReactFlowProvider } from "@xyflow/react";
 
 export default function App() {
   return (
-    <Provider>
+    <Provider forcedTheme="light">
       <Box width="100vw" height="100vh">
         <ReactFlowProvider>
           <NodeCanvas />
