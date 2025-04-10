@@ -16,7 +16,7 @@ import EdgeInspector from "./EdgeInspector";
 export default function DevTools() {
   const [nodeInspectorActive, setNodeInspectorActive] = useState(true);
   const [edgeInspectorActive, setEdgeInspectorActive] = useState(true);
-  const [changeLoggerActive, setChangeLoggerActive] = useState(true);
+  const [changeLoggerActive, setChangeLoggerActive] = useState(false);
   const [viewportLoggerActive, setViewportLoggerActive] = useState(true);
 
   return (
