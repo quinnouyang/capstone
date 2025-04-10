@@ -1,4 +1,11 @@
-import { ChangeEvent, MouseEvent, useCallback, useRef } from "react";
+import {
+  ChangeEvent,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   ReactFlow,
   useNodesState,
@@ -13,33 +20,37 @@ import {
   OnConnect,
   SelectionMode,
   type XYPosition,
-  type NodeOrigin,
+  Background,
+  Panel,
+  type ColorMode as FlowColorMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import AudioTrackNode, { AudioTrackNodeData } from "./AudioTrackNode";
-import { useColorMode } from "./ui/color-mode";
+import {
+  ColorModeButton,
+  useColorMode as useChakraColorMode,
+} from "./ui/color-mode";
 import DevTools from "./debug/Devtools";
 import { extendId } from "./utils";
-
-const NODE_ORIGIN: NodeOrigin = [0, 0.5];
 
 let nodeCount = 2;
 let edgeCount = 1;
 
 export default function NodeCanvas() {
-  const { colorMode } = useColorMode();
+  const { colorMode: chakraColorMode } = useChakraColorMode();
+  const [flowColorMode, setFlowColorMode] =
+    useState<FlowColorMode>(chakraColorMode);
+
+  useEffect(() => {
+    setFlowColorMode(chakraColorMode);
+  }, [chakraColorMode]);
 
   const ref = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState<
     Node<AudioTrackNodeData>
-  >([
-    initNode(0, { x: 0, y: 0 }),
-    initNode(1, { x: 800, y: 200 }),
-    // initNode("2", { x: 800, y: -200 }),
-  ]);
+  >([initNode(0, { x: 0, y: 0 }), initNode(1, { x: 800, y: 200 })]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([
-    { id: "0", source: "0", target: "1" },
-    // { id: "1", source: "0", target: "2" },
+    { id: "0", source: nodes[0].id, target: nodes[1].id },
   ]);
   const { addNodes, screenToFlowPosition } = useReactFlow<
     Node<AudioTrackNodeData>,
@@ -77,7 +88,7 @@ export default function NodeCanvas() {
         },
       },
       type: "audioTrackNode",
-      origin: NODE_ORIGIN,
+      origin: [0, 0.5],
     };
   }
 
@@ -100,31 +111,28 @@ export default function NodeCanvas() {
       // Skip if connection ends on a node (isValid) or no connection is in process (somehow)
       if (connectionState.isValid || !connectionState.fromNode) return;
 
-      const sourceId = connectionState.fromNode.id;
-
       ++nodeCount;
       ++edgeCount;
 
       const { clientX, clientY } =
         "changedTouches" in event ? event.changedTouches[0] : event;
 
-      setNodes((nds) =>
-        nds.concat(
-          initNode(
-            nodeCount,
-            screenToFlowPosition({
-              x: clientX,
-              y: clientY,
-            }),
-          ),
-        ),
+      const node = initNode(
+        nodeCount,
+        screenToFlowPosition({
+          x: clientX,
+          y: clientY,
+        }),
       );
 
+      const source = connectionState.fromNode.id;
+
+      setNodes((nds) => nds.concat(node));
       setEdges((eds) =>
         eds.concat({
-          id: String(edgeCount),
-          source: sourceId,
-          target: String(nodeCount),
+          id: extendId(String(edgeCount)),
+          source,
+          target: node.id,
         }),
       );
     },
@@ -134,7 +142,7 @@ export default function NodeCanvas() {
   return (
     <ReactFlow
       ref={ref}
-      colorMode={colorMode}
+      colorMode={flowColorMode}
       nodes={nodes}
       edges={edges}
       fitView
@@ -153,8 +161,12 @@ export default function NodeCanvas() {
       zoomOnDoubleClick={false}
       proOptions={{ hideAttribution: true }}
     >
+      <Panel position="top-right">
+        <ColorModeButton />
+      </Panel>
       <MiniMap />
       <Controls style={{ color: "gray" }} />
+      <Background />
       <DevTools />
     </ReactFlow>
   );
