@@ -1,17 +1,17 @@
+import { Panel } from "@xyflow/react";
 import {
   useState,
   type Dispatch,
-  type SetStateAction,
-  type ReactNode,
   type HTMLAttributes,
+  type ReactNode,
+  type SetStateAction,
 } from "react";
-import { Panel } from "@xyflow/react";
 import "./index.css";
 
-import NodeInspector from "./NodeInspector";
 import ChangeLogger from "./ChangeLogger";
-import ViewportLogger from "./ViewportLogger";
 import EdgeInspector from "./EdgeInspector";
+import NodeInspector from "./NodeInspector";
+import ViewportLogger from "./ViewportLogger";
 
 export default function DevTools() {
   const [nodeInspectorActive, setNodeInspectorActive] = useState(true);
