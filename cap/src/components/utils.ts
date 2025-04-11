@@ -1,14 +1,15 @@
-const DATE = new Date();
-
 const ids: Set<string> = new Set<string>();
 
-export function genCountableId(count: number, prefix?: string): string {
-  const id = [prefix, count, DATE.getMilliseconds()].join(" ").trim();
+function genUuid(len = 4) {
+  return self.crypto.randomUUID().slice(0, len + 1);
+}
+
+export function genId(idx: number, name: string, suffix?: string): string {
+  const id = [name, idx, suffix].join(" ").trim();
 
   if (ids.has(id)) {
-    // console.warn(`ID ${id} aready exists in. Retrying with a random count`);
-    // console.warn(ids);
-    return genCountableId(Math.round(Math.random() * 9999), prefix);
+    console.warn(`ID ${id} aready exists. Retrying with a random suffix`);
+    return genId(idx, name, genUuid());
   }
 
   ids.add(id);

@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, useEffect, useRef } from "react";
+import { Button, Stack } from "@chakra-ui/react";
 import {
   Handle,
   Node,
@@ -9,18 +9,18 @@ import {
   useReactFlow,
   type XYPosition,
 } from "@xyflow/react";
-import { Button, Stack } from "@chakra-ui/react";
-import { FileInput, FileUploadRoot } from "./ui/file-upload";
+import { ChangeEvent, memo, useEffect, useRef } from "react";
 import { createAudioNodeSource } from "../engine/core";
-import { genCountableId } from "./utils";
+import { FileInput, FileUploadRoot } from "./ui/file-upload";
+import { genId } from "./utils";
 
 export type AudioTrackNode = Node<{
   src?: string;
 }>;
 
-export function initNode(count: number, position: XYPosition): AudioTrackNode {
+export function initNode(idx: number, position: XYPosition): AudioTrackNode {
   return {
-    id: genCountableId(count, "node"),
+    id: genId(idx, "node"),
     position,
     data: {},
     type: "audioTrackNode",
@@ -66,11 +66,13 @@ const AudioTrackNodeComponent = memo(
         gap={4}
       >
         <Handle
+          id="in"
           type="target"
           position={Position.Left}
           isConnectableStart={false}
         />
         <Handle
+          id="out"
           type="source"
           position={Position.Right}
           isConnectableEnd={false}

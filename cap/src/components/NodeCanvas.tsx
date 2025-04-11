@@ -1,43 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import {
-  ReactFlow,
-  useNodesState,
-  useEdgesState,
-  MiniMap,
+  addEdge,
+  Background,
   Controls,
   Edge,
-  useReactFlow,
-  addEdge,
-  OnConnectEnd,
+  MiniMap,
   OnConnect,
-  SelectionMode,
-  Background,
+  OnConnectEnd,
   Panel,
+  ReactFlow,
+  SelectionMode,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
   type ColorMode as FlowColorMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import AudioTrackNodeComponent, {
-  initNode,
-  AudioTrackNode,
-} from "./AudioTrackNode";
+
 import {
   ColorModeButton,
   useColorMode as useChakraColorMode,
 } from "./ui/color-mode";
+
+import { initNode, type AudioTrackNode } from "./AudioTrackNode";
+import { INIT_EDGES, INIT_NODES, NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
-import { genCountableId } from "./utils";
-
-let nodeCount = 2;
-let edgeCount = 1;
-
-const INIT_NODES: AudioTrackNode[] = [
-  initNode(0, { x: 0, y: 0 }),
-  initNode(1, { x: 800, y: 200 }),
-];
-
-const NODE_TYPES = {
-  audioTrackNode: AudioTrackNodeComponent,
-};
 
 // [TODO] Debug redundant render console.logs
 export default function NodeCanvas() {
@@ -45,47 +33,34 @@ export default function NodeCanvas() {
 
   const [nodes, setNodes, onNodesChange] =
     useNodesState<AudioTrackNode>(INIT_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([
-    {
-      id: genCountableId(edgeCount - 1, "edge"),
-      source: nodes[0].id,
-      target: nodes[1].id,
-    },
-  ]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(INIT_EDGES);
+  const [nodeCount, setNodeCount] = useState(INIT_NODES.length);
+  const [edgeCount, setEdgeCount] = useState(INIT_EDGES.length);
   const { screenToFlowPosition } = useReactFlow<AudioTrackNode>();
 
   const { colorMode: chakraColorMode } = useChakraColorMode();
   const [flowColorMode, setFlowColorMode] =
     useState<FlowColorMode>(chakraColorMode);
 
+  // Sync Chakra and ReactFlow color modes
   useEffect(() => {
     setFlowColorMode(chakraColorMode);
   }, [chakraColorMode]);
 
+  // Add edge after connecting nodes
   const onConnect = useCallback<OnConnect>(
     (connection) => {
-      edgeCount++;
-
-      setEdges((eds) =>
-        addEdge(
-          {
-            ...connection,
-            id: genCountableId(edgeCount - 1, "edge"),
-          },
-          eds,
-        ),
-      );
+      setEdges((eds) => addEdge(connection, eds));
+      setEdgeCount(() => edgeCount + 1);
     },
     [setEdges, addEdge],
   );
 
-  // Drag-and-drop to create a new node
+  // Create new node and add edge after connecting on empty space: https://reactflow.dev/examples/nodes/add-node-on-edge-drop
   const onConnectEnd = useCallback<OnConnectEnd>(
     (event, connectionState) => {
       // Skip if connection ends on a node (isValid) or no connection is in process (somehow)
       if (connectionState.isValid || !connectionState.fromNode) return;
-
-      ++nodeCount;
 
       const { clientX, clientY } =
         "changedTouches" in event ? event.changedTouches[0] : event;
@@ -104,15 +79,19 @@ export default function NodeCanvas() {
       setEdges((eds) =>
         addEdge(
           {
-            id: genCountableId(edgeCount - 1, "edge"),
             source,
             target: node.id,
+            sourceHandle: "out",
+            targetHandle: "in",
           },
           eds,
         ),
       );
+
+      setNodeCount(() => nodeCount + 1);
+      setEdgeCount(() => edgeCount + 1);
     },
-    [screenToFlowPosition, setEdges, addEdge],
+    [screenToFlowPosition, setNodes, setEdges, addEdge],
   );
 
   return (
