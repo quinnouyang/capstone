@@ -6,11 +6,11 @@ import { Provider } from "./components/ui/provider";
 export default function App() {
   return (
     <Provider forcedTheme="light">
-      <Box width="100vw" height="100vh">
-        <ReactFlowProvider>
+      <ReactFlowProvider>
+        <Box width="100vw" height="100vh">
           <NodeCanvas />
-        </ReactFlowProvider>
-      </Box>
+        </Box>
+      </ReactFlowProvider>
     </Provider>
   );
 }

@@ -4,10 +4,7 @@ import {
   addEdge,
   Background,
   Controls,
-  Edge,
   MiniMap,
-  OnConnect,
-  OnConnectEnd,
   Panel,
   ReactFlow,
   SelectionMode,
@@ -15,6 +12,8 @@ import {
   useNodesState,
   useReactFlow,
   type ColorMode as FlowColorMode,
+  type OnConnect,
+  type OnConnectEnd,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -27,13 +26,16 @@ import { initNode, type AudioTrackNode } from "./AudioTrackNode";
 import { INIT_EDGES, INIT_NODES, NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
 
-// [TODO] Debug redundant render console.logs
+/**
+ * Issues
+ * - Initial rerender from `onNodesChange` (when `INIT_NODES` is not empty) and `screenToFlowPosition`
+ */
+
 export default function NodeCanvas() {
   const ref = useRef<HTMLDivElement>(null);
 
-  const [nodes, setNodes, onNodesChange] =
-    useNodesState<AudioTrackNode>(INIT_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(INIT_EDGES);
+  const [nodes, setNodes, onNodesChange] = useNodesState(INIT_NODES);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(INIT_EDGES);
   const [nodeCount, setNodeCount] = useState(INIT_NODES.length);
   const [edgeCount, setEdgeCount] = useState(INIT_EDGES.length);
   const { screenToFlowPosition } = useReactFlow<AudioTrackNode>();
