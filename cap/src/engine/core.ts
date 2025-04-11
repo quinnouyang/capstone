@@ -21,5 +21,4 @@ export function createAudioNodeSource(el: HTMLAudioElement) {
   SOURCES.set(el.id, srcNode);
 
   srcNode.connect(CTX.destination);
-  console.log(CTX, SOURCES);
 }
