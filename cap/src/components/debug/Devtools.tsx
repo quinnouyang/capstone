@@ -1,4 +1,4 @@
-import { Panel, useEdges, useNodes } from "@xyflow/react";
+import { Panel } from "@xyflow/react";
 import {
   useState,
   type Dispatch,
@@ -8,10 +8,10 @@ import {
 } from "react";
 import "./index.css";
 
-import type { AudioTrackNode } from "../AudioTrackNode";
 import ChangeLogger from "./ChangeLogger";
 import EdgeInspector from "./EdgeInspector";
 import NodeInspector from "./NodeInspector";
+import StoreInspector from "./StoreInspector";
 import ViewportLogger from "./ViewportLogger";
 
 export default function DevTools() {
@@ -19,11 +19,7 @@ export default function DevTools() {
   const [nodeInspectorActive, setNodeInspectorActive] = useState(true);
   const [edgeInspectorActive, setEdgeInspectorActive] = useState(true);
   const [viewportLoggerActive, setViewportLoggerActive] = useState(true);
-  const [nodesStateActive, setNodesStateActive] = useState(false);
-  const [edgesStateActive, setEdgesStateActive] = useState(false);
-
-  const nodes = useNodes<AudioTrackNode>();
-  const edges = useEdges();
+  const [storeInspectorActive, setStoreInspectorActive] = useState(false);
 
   return (
     <div className="react-flow__devtools">
@@ -57,36 +53,18 @@ export default function DevTools() {
           Viewport Logger
         </DevToolButton>
         <DevToolButton
-          setActive={setNodesStateActive}
-          active={nodesStateActive}
-          title="Toggle Nodes State"
+          setActive={setStoreInspectorActive}
+          active={storeInspectorActive}
+          title="Toggle Store Inspector"
         >
-          Nodes State
-        </DevToolButton>
-        <DevToolButton
-          setActive={setEdgesStateActive}
-          active={edgesStateActive}
-          title="Toggle Edges State"
-        >
-          Edges State
+          Store Inspector
         </DevToolButton>
       </Panel>
       {changeLoggerActive && <ChangeLogger />}
       {nodeInspectorActive && <NodeInspector />}
       {edgeInspectorActive && <EdgeInspector />}
       {viewportLoggerActive && <ViewportLogger />}
-      <Panel position="top-right">
-        {nodesStateActive && (
-          <>
-            Nodes <pre>{JSON.stringify(nodes, null, 2)}</pre>
-          </>
-        )}
-        {edgesStateActive && (
-          <>
-            Edges <pre>{JSON.stringify(edges, null, 2)}</pre>
-          </>
-        )}
-      </Panel>
+      {storeInspectorActive && <StoreInspector />}
     </div>
   );
 }
