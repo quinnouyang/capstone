@@ -2,10 +2,7 @@ import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
-  type Connection,
   type Edge,
-  type EdgeChange,
-  type NodeChange,
   type OnConnect,
   type OnEdgesChange,
   type OnNodesChange,
@@ -20,15 +17,18 @@ export type AppState = {
   edges: Edge[];
   nodeCount: number;
   edgeCount: number;
+
+  setNodes: (nodes: AudioTrackNode[]) => void;
+  setEdges: (edges: Edge[]) => void;
+  addNodes: (nodes: AudioTrackNode[]) => void;
+  addEdges: (edges: Edge[]) => void;
+  increaseNodeCount: () => void;
+  increaseEdgeCount: () => void;
+
   onNodesChange: OnNodesChange<AudioTrackNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
-  setNodes: (nodes: AudioTrackNode[]) => void;
-  setEdges: (edges: Edge[]) => void;
-  increaseNodeCount: () => void;
-  increaseEdgeCount: () => void;
-  addNodes: (nodes: AudioTrackNode[]) => void;
-  addEdges: (edges: Edge[]) => void;
+
   updateNode: (id: string, data: AudioTrackNode["data"]) => void;
 };
 
@@ -41,26 +41,27 @@ const useCustomStore = createWithEqualityFn<AppState>(
     edges: INIT_EDGES,
     nodeCount: INIT_NODES.length,
     edgeCount: INIT_EDGES.length,
-    onNodesChange: (changes: NodeChange<AudioTrackNode>[]) => {
+
+    onNodesChange: (changes) => {
       set({
         nodes: applyNodeChanges(changes, get().nodes),
       });
     },
-    onEdgesChange: (changes: EdgeChange[]) => {
+    onEdgesChange: (changes) => {
       set({
         edges: applyEdgeChanges(changes, get().edges),
       });
     },
-    onConnect: (connection: Connection) => {
+    onConnect: (connection) => {
       set({
         edges: addEdge(connection, get().edges),
       });
       get().increaseEdgeCount();
     },
-    setNodes: (nodes: AudioTrackNode[]) => {
+    setNodes: (nodes) => {
       set({ nodes });
     },
-    setEdges: (edges: Edge[]) => {
+    setEdges: (edges) => {
       set({ edges });
     },
     increaseNodeCount: () => {
@@ -73,13 +74,13 @@ const useCustomStore = createWithEqualityFn<AppState>(
         edgeCount: ++edgeCount,
       }));
     },
-    addNodes: (nodes: AudioTrackNode[]) => {
+    addNodes: (nodes) => {
       set({ nodes: get().nodes.concat(nodes) });
     },
-    addEdges: (edges: Edge[]) => {
+    addEdges: (edges) => {
       set({ edges: get().edges.concat(edges) });
     },
-    updateNode(id: string, data: AudioTrackNode["data"]) {
+    updateNode(id, data) {
       set({
         nodes: get().nodes.map((node) =>
           node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
