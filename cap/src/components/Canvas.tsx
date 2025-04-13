@@ -22,12 +22,12 @@ import DevTools from "./debug/Devtools";
  * - Initial rerender from `onNodesChange` (when `INIT_NODES` is not empty) and `screenToFlowPosition`
  */
 
-export default function NodeCanvas() {
+export default function Canvas() {
   const ref = useRef<HTMLDivElement>(null);
 
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
     useCustomStore((state) => state, shallow);
-    
+
   const { colorMode } = useColorMode();
 
   console.log(colorMode);

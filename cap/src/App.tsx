@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { ReactFlowProvider } from "@xyflow/react";
-import NodeCanvas from "./components/NodeCanvas";
+import Canvas from "./components/Canvas";
 import { Provider } from "./components/ui/provider";
 
 export default function App() {
@@ -8,7 +8,7 @@ export default function App() {
     <Provider forcedTheme="light">
       <ReactFlowProvider>
         <Box width="100vw" height="100vh">
-          <NodeCanvas />
+          <Canvas />
         </Box>
       </ReactFlowProvider>
     </Provider>
