@@ -22,11 +22,15 @@ export type AudioTrackNode = Node<
   "audioTrackNode"
 >;
 
-export function initNode(idx: number, position: XYPosition): AudioTrackNode {
+export function initNode(
+  idx: number,
+  position: XYPosition,
+  data = {},
+): AudioTrackNode {
   return {
     id: genId(idx, "node"),
     position,
-    data: {},
+    data,
     type: "audioTrackNode",
     origin: [0, 0.5],
   };

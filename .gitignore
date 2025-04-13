@@ -1,6 +1,7 @@
 .DS_Store
 .eslintcache
 .prettier-cache
+audio
 dist
 node_modules
 pnpm-debug.log*
