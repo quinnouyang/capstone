@@ -122,6 +122,8 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
     set({ isPlaying: !get().isPlaying });
     const ctx = get().ctx;
     ctx.state === "suspended" ? ctx.resume() : ctx.suspend();
+    const firstId = get().nodes.at(0)?.id;
+    if (firstId) get().play(firstId);
   },
   createAudioNodeSource: (el) => {
     if (get().nodeIdToEl.has(el.id))
