@@ -2,17 +2,22 @@ import {
   Background,
   Controls,
   MiniMap,
+  OnConnectEnd,
   Panel,
   ReactFlow,
   SelectionMode,
+  useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useShallow } from "zustand/shallow";
 
+import { useCallback } from "react";
 import useCustomStore from "../store";
+import { initNode } from "./AudioTrackNode";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
 import { ColorModeButton, useColorMode } from "./ui/color-mode";
+import { genId } from "./utils";
 
 /**
  * Issues
@@ -20,18 +25,64 @@ import { ColorModeButton, useColorMode } from "./ui/color-mode";
  */
 
 export default function Canvas() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
-    useCustomStore(
-      useShallow((s) => ({
-        nodes: s.nodes,
-        edges: s.edges,
-        onNodesChange: s.onNodesChange,
-        onEdgesChange: s.onEdgesChange,
-        onConnect: s.onConnect,
-      })),
-    );
-
+  const {
+    nodes,
+    edges,
+    nodeCount,
+    edgeCount,
+    addNodes,
+    addEdges,
+    addEdge,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+  } = useCustomStore(
+    useShallow((s) => ({
+      nodes: s.nodes,
+      edges: s.edges,
+      nodeCount: s.nodeCount,
+      edgeCount: s.edgeCount,
+      addNodes: s.addNodes,
+      addEdges: s.addEdges,
+      addEdge: s.addEdge,
+      onNodesChange: s.onNodesChange,
+      onEdgesChange: s.onEdgesChange,
+      onConnect: s.onConnect,
+    })),
+  );
   const { colorMode } = useColorMode(); // [Bug] Redundant rerender
+  const { screenToFlowPosition } = useReactFlow();
+
+  const onConnectEnd = useCallback<OnConnectEnd>(
+    (event, connectionState) => {
+      // Skip if connection ends on a node (isValid) or no connection is in process (somehow)
+      if (connectionState.isValid || !connectionState.fromNode) return;
+
+      const { clientX, clientY } =
+        "changedTouches" in event ? event.changedTouches[0] : event;
+
+      const node = initNode(
+        nodeCount,
+        screenToFlowPosition({
+          x: clientX,
+          y: clientY,
+        }),
+        {},
+      );
+
+      const source = connectionState.fromNode.id;
+
+      addNodes(node);
+      addEdge({
+        id: genId(edgeCount, "edge"),
+        source,
+        target: node.id,
+        sourceHandle: "out",
+        targetHandle: "in",
+      });
+    },
+    [nodeCount, edgeCount, addNodes, addEdges, screenToFlowPosition],
+  );
 
   return (
     <ReactFlow
@@ -43,6 +94,7 @@ export default function Canvas() {
       onNodesChange={onNodesChange} // [Bug] Redundant rerender
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
+      onConnectEnd={onConnectEnd}
       nodeTypes={NODE_TYPES}
       panOnScroll
       selectionOnDrag

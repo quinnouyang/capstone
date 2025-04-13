@@ -2,6 +2,7 @@ import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
+  type Connection,
   type Edge,
   type OnConnect,
   type OnEdgesChange,
@@ -18,22 +19,22 @@ export type AppState = {
   nodeCount: number;
   edgeCount: number;
 
-  setNodes: (nodes: AudioTrackNode[]) => void;
-  setEdges: (edges: Edge[]) => void;
-  addNodes: (nodes: AudioTrackNode[]) => void;
+  addNodes: (nodes: AudioTrackNode | AudioTrackNode[]) => void;
   addEdges: (edges: Edge[]) => void;
-  increaseNodeCount: () => void;
-  increaseEdgeCount: () => void;
+  addEdge: (edge: Edge | Connection) => void;
 
   onNodesChange: OnNodesChange<AudioTrackNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
 
-  updateNode: (id: string, data: AudioTrackNode["data"]) => void;
+  updateNodeData: (id: string, data: AudioTrackNode["data"]) => void;
+  refreshCounts: () => void;
 };
 
 /**
  * Custom `useStore`: https://reactflow.dev/api-reference/hooks/use-store.
+ *
+ * Global state, excluding a few that require hooks (e.g. `useReactFlow`)
  */
 const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
   nodes: INIT_NODES,
@@ -41,49 +42,47 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
   nodeCount: INIT_NODES.length,
   edgeCount: INIT_EDGES.length,
 
+  addNodes: (nodes) => {
+    set({ nodes: get().nodes.concat(nodes) });
+    get().refreshCounts();
+  },
+  addEdges: (edges) => {
+    set({ edges: get().edges.concat(edges) });
+    get().refreshCounts();
+  },
+  addEdge: (edge) => {
+    set({ edges: addEdge(edge, get().edges) });
+    get().refreshCounts();
+  },
+
   onNodesChange: (changes) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
     });
+    get().refreshCounts();
   },
   onEdgesChange: (changes) => {
     set({
       edges: applyEdgeChanges(changes, get().edges),
     });
+    get().refreshCounts();
   },
   onConnect: (connection) => {
-    set({
-      edges: addEdge(connection, get().edges),
-    });
-    get().increaseEdgeCount();
+    get().addEdge(connection);
+    get().refreshCounts();
   },
-  setNodes: (nodes) => {
-    set({ nodes });
-  },
-  setEdges: (edges) => {
-    set({ edges });
-  },
-  increaseNodeCount: () => {
-    set(({ nodeCount }) => ({
-      nodeCount: ++nodeCount,
-    }));
-  },
-  increaseEdgeCount: () => {
-    set(({ edgeCount }) => ({
-      edgeCount: ++edgeCount,
-    }));
-  },
-  addNodes: (nodes) => {
-    set({ nodes: get().nodes.concat(nodes) });
-  },
-  addEdges: (edges) => {
-    set({ edges: get().edges.concat(edges) });
-  },
-  updateNode(id, data) {
+
+  updateNodeData(id, data) {
     set({
       nodes: get().nodes.map((node) =>
         node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
       ),
+    });
+  },
+  refreshCounts: () => {
+    set({
+      nodeCount: get().nodes.length,
+      edgeCount: get().edges.length,
     });
   },
 }));
