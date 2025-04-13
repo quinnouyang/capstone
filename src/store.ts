@@ -9,11 +9,12 @@ import {
   type OnNodesChange,
 } from "@xyflow/react";
 
+import { useShallow } from "zustand/shallow";
 import { createWithEqualityFn } from "zustand/traditional";
 import { type AudioTrackNode } from "./components/AudioTrackNode";
 import { INIT_EDGES, INIT_NODES } from "./components/consts";
 
-export type AppState = {
+export type State = {
   /**
    * Graph
    */
@@ -49,11 +50,11 @@ export type AppState = {
 };
 
 /**
- * Custom `useStore`: https://reactflow.dev/api-reference/hooks/use-store.
+ * Custom `useStore`: https://reactflow.dev/api-reference/hooks/use-store, https://zustand.docs.pmnd.rs/apis/create-with-equality-fn#signature
  *
  * Global state, excluding a few that require hooks (e.g. `useReactFlow`)
  */
-const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
+const useCustomStore = createWithEqualityFn<State>()((set, get) => ({
   /**
    * ReactFlow
    */
@@ -142,7 +143,11 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
 
     const srcNode = get().ctx.createMediaElementSource(el);
     srcNode.connect(get().ctx.destination);
-    get().nodeIdToEl.set(el.id, el);
+
+    // https://zustand.docs.pmnd.rs/guides/maps-and-sets-usage (Necessary?)
+    set(({ nodeIdToEl }) => ({
+      nodeIdToEl: new Map(nodeIdToEl).set(el.id, el),
+    }));
   },
   play: (id) => {
     const srcNode = get().nodeIdToEl.get(id);
@@ -152,4 +157,6 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
   },
 }));
 
-export default useCustomStore;
+export default function useShallowStore<T>(selector: (state: State) => T): T {
+  return useCustomStore(useShallow(selector));
+}

@@ -9,9 +9,9 @@ import {
   type XYPosition,
 } from "@xyflow/react";
 import { ChangeEvent, useEffect, useRef } from "react";
-import { useShallow } from "zustand/shallow";
 
-import useCustomStore from "../store";
+import type { State } from "../store";
+import useShallowStore from "../store";
 import { FileInput, FileUploadRoot } from "./ui/file-upload";
 import { genId } from "./utils";
 
@@ -36,6 +36,13 @@ export function initNode(
   };
 }
 
+const SELECTOR = (s: State) => ({
+  updateNodeData: s.updateNodeData,
+  getOutputNodes: s.getOutputNodes,
+  createAudioNodeSource: s.createAudioNodeSource,
+  play: s.play,
+});
+
 export function AudioTrackNode({
   id,
   data,
@@ -43,14 +50,7 @@ export function AudioTrackNode({
 }: NodeProps<AudioTrackNode>) {
   const ref = useRef<HTMLAudioElement>(null);
   const { updateNodeData, getOutputNodes, createAudioNodeSource, play } =
-    useCustomStore(
-      useShallow((s) => ({
-        updateNodeData: s.updateNodeData,
-        getOutputNodes: s.getOutputNodes,
-        createAudioNodeSource: s.createAudioNodeSource,
-        play: s.play,
-      })),
-    );
+    useShallowStore(SELECTOR);
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
     if (!files || !files[0]) {

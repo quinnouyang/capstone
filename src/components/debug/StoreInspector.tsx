@@ -1,5 +1,4 @@
-import { useShallow } from "zustand/shallow";
-import useCustomStore from "../../store";
+import useShallowStore from "../../store";
 
 export default function StoreInspector() {
   const {
@@ -11,7 +10,7 @@ export default function StoreInspector() {
     isPlaying,
     nodeIdToEl,
     getOutputNodes,
-  } = useCustomStore(useShallow((s) => s));
+  } = useShallowStore((s) => s);
 
   return (
     <div className="react-flow__devtools-changelogger">

@@ -9,16 +9,28 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useShallow } from "zustand/shallow";
 
 import { useCallback } from "react";
-import useCustomStore from "../store";
+import useShallowStore, { type State } from "../store";
 import { initNode } from "./AudioTrackNode";
 import PlayPause from "./PlayPause";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
 import { ColorModeButton, useColorMode } from "./ui/color-mode";
 import { genId } from "./utils";
+
+const SELECTOR = (s: State) => ({
+  nodes: s.nodes,
+  edges: s.edges,
+  nodeCount: s.nodeCount,
+  edgeCount: s.edgeCount,
+  addNodes: s.addNodes,
+  addEdges: s.addEdges,
+  addEdge: s.addEdge,
+  onNodesChange: s.onNodesChange,
+  onEdgesChange: s.onEdgesChange,
+  onConnect: s.onConnect,
+});
 
 export default function Canvas() {
   const {
@@ -32,20 +44,7 @@ export default function Canvas() {
     onNodesChange,
     onEdgesChange,
     onConnect,
-  } = useCustomStore(
-    useShallow((s) => ({
-      nodes: s.nodes,
-      edges: s.edges,
-      nodeCount: s.nodeCount,
-      edgeCount: s.edgeCount,
-      addNodes: s.addNodes,
-      addEdges: s.addEdges,
-      addEdge: s.addEdge,
-      onNodesChange: s.onNodesChange,
-      onEdgesChange: s.onEdgesChange,
-      onConnect: s.onConnect,
-    })),
-  );
+  } = useShallowStore(SELECTOR);
   const { colorMode } = useColorMode(); // [Bug] Redundant rerender
   const { screenToFlowPosition } = useReactFlow(); // [Bug] Redundant rerender
 
