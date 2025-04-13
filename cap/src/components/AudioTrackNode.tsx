@@ -92,7 +92,7 @@ export function AudioTrackNode({
         <Button>TEST</Button>
       </NodeToolbar>
       <NodeResizer isVisible={selected} />
-      <FileUploadRoot id="audioTrack" accept="audio/*" onChange={onChange}>
+      <FileUploadRoot accept="audio/*" onChange={onChange}>
         <FileInput />
       </FileUploadRoot>
       <audio ref={ref} id={id} controls src={src}></audio>
