@@ -63,7 +63,7 @@ export default function NodeCanvas() {
         <ColorModeButton />
       </Panel>
       <MiniMap />
-      <Controls style={{ color: "gray" }} />
+      <Controls />
       <Background />
       <DevTools />
     </ReactFlow>
