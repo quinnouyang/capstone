@@ -12,15 +12,13 @@ import {
 import { createWithEqualityFn } from "zustand/traditional";
 import { type AudioTrackNode } from "./components/AudioTrackNode";
 import { INIT_EDGES, INIT_NODES } from "./components/consts";
-import { toggleCtxState } from "./engine/core";
 
 export type AppState = {
+  // ReactFlow
   nodes: AudioTrackNode[];
   edges: Edge[];
   nodeCount: number;
   edgeCount: number;
-
-  isPlaying: boolean;
 
   getNode: (id: string) => AudioTrackNode;
   getEdge: (id: string) => Edge;
@@ -34,8 +32,15 @@ export type AppState = {
 
   updateNodeData: (id: string, data: AudioTrackNode["data"]) => void;
   refreshCounts: () => void;
+  getOutputNodes: (id: string) => AudioTrackNode[];
 
+  // Audio
+  ctx: AudioContext;
+  isPlaying: boolean;
   togglePlay: () => void;
+  createAudioNodeSource: (el: HTMLAudioElement) => void;
+  play: (id: string) => void;
+  nodeIdToEl: Map<string, HTMLAudioElement>;
 };
 
 /**
@@ -44,12 +49,11 @@ export type AppState = {
  * Global state, excluding a few that require hooks (e.g. `useReactFlow`)
  */
 const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
+  // ReactFlow
   nodes: INIT_NODES,
   edges: INIT_EDGES,
   nodeCount: INIT_NODES.length,
   edgeCount: INIT_EDGES.length,
-
-  isPlaying: false,
 
   getNode: (id) => {
     const node = get().nodes.find((n) => n.id === id);
@@ -104,11 +108,36 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
       edgeCount: get().edges.length,
     });
   },
+  getOutputNodes: (id) => {
+    return get()
+      .edges.filter((e) => e.source === id)
+      .map((e) => get().getNode(e.target));
+  },
 
+  // Audio
+  ctx: new AudioContext(), // [Decide] Init as suspended?
+
+  isPlaying: false,
   togglePlay: () => {
     set({ isPlaying: !get().isPlaying });
-    toggleCtxState();
+    const ctx = get().ctx;
+    ctx.state === "suspended" ? ctx.resume() : ctx.suspend();
   },
+  createAudioNodeSource: (el) => {
+    if (get().nodeIdToEl.has(el.id))
+      return console.warn("Audio source already exists", el.id);
+
+    const srcNode = get().ctx.createMediaElementSource(el);
+    srcNode.connect(get().ctx.destination);
+    get().nodeIdToEl.set(el.id, el);
+  },
+  play: (id) => {
+    const srcNode = get().nodeIdToEl.get(id);
+    if (!srcNode) return console.warn("Could not find audio source", id);
+    srcNode.currentTime = 0;
+    srcNode.play();
+  },
+  nodeIdToEl: new Map<string, HTMLAudioElement>(),
 }));
 
 export default useCustomStore;

@@ -6,8 +6,8 @@ import {
 } from "./AudioTrackNode";
 
 export const INIT_NODES: AudioTrackNode[] = [
-  initNode(0, { x: 0, y: 0 }, {}),
-  initNode(1, { x: 800, y: 200 }, {}),
+  initNode(0, { x: 0, y: 0 }),
+  initNode(1, { x: 800, y: 200 }),
 ];
 
 export const INIT_EDGES: Edge[] = addEdge(

@@ -6,13 +6,11 @@ import {
   NodeResizer,
   NodeToolbar,
   Position,
-  useNodeConnections,
   type XYPosition,
 } from "@xyflow/react";
 import { ChangeEvent, useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 
-import { createAudioNodeSource, play } from "../engine/core";
 import useCustomStore from "../store";
 import { FileInput, FileUploadRoot } from "./ui/file-upload";
 import { genId } from "./utils";
@@ -24,15 +22,11 @@ export type AudioTrackNode = Node<
   "audioTrackNode"
 >;
 
-export function initNode(
-  idx: number,
-  position: XYPosition,
-  data: AudioTrackNode["data"],
-): AudioTrackNode {
+export function initNode(idx: number, position: XYPosition): AudioTrackNode {
   return {
     id: genId(idx, "node"),
     position,
-    data,
+    data: {},
     type: "audioTrackNode",
     origin: [0, 0.5],
   };
@@ -40,12 +34,19 @@ export function initNode(
 
 export function AudioTrackNode({
   id,
-  data: { src },
+  data,
   selected,
 }: NodeProps<AudioTrackNode>) {
   const ref = useRef<HTMLAudioElement>(null);
-  const updateNodeData = useCustomStore(useShallow((s) => s.updateNodeData));
-  const outConnections = useNodeConnections({ handleType: "source" });
+  const { updateNodeData, getOutputNodes, createAudioNodeSource, play } =
+    useCustomStore(
+      useShallow((s) => ({
+        updateNodeData: s.updateNodeData,
+        getOutputNodes: s.getOutputNodes,
+        createAudioNodeSource: s.createAudioNodeSource,
+        play: s.play,
+      })),
+    );
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
     if (!files || !files[0]) {
@@ -54,24 +55,26 @@ export function AudioTrackNode({
     }
 
     // https://reactflow.dev/examples/nodes/update-node, https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
-    updateNodeData(id, { src: URL.createObjectURL(files[0]) });
+    updateNodeData(id, { ...data, src: URL.createObjectURL(files[0]) });
   }
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) {
-      console.warn("AudioTrackNode: ref is null");
-      return;
-    }
+    if (!el) return console.warn("AudioTrackNode: ref is null");
 
     createAudioNodeSource(el);
+  }, [ref]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return console.warn("AudioTrackNode: ref is null");
 
     el.addEventListener("ended", () => {
-      outConnections.forEach(({ target }) => {
-        play(target);
+      getOutputNodes(id).forEach(({ id }) => {
+        play(id);
       });
     });
-  }, [ref, outConnections]);
+  }, [ref, getOutputNodes]);
 
   return (
     <Stack
@@ -102,7 +105,7 @@ export function AudioTrackNode({
       <FileUploadRoot accept="audio/*" onChange={onChange}>
         <FileInput />
       </FileUploadRoot>
-      <audio ref={ref} id={id} controls src={src}></audio>
+      <audio ref={ref} id={id} controls src={data.src}></audio>
     </Stack>
   );
 }
