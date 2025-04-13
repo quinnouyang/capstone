@@ -36,14 +36,13 @@ export function initNode(
   };
 }
 
-// [TODO] Debug onChange with wrong id of 0
 export function AudioTrackNode({
   id,
   data: { src },
   selected,
 }: NodeProps<AudioTrackNode>) {
   const ref = useRef<HTMLAudioElement>(null);
-  const { updateNode } = useCustomStore(useShallow((state) => state));
+  const updateNode = useCustomStore(useShallow((s) => s.updateNode));
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
     if (!files || !files[0]) {
@@ -51,9 +50,7 @@ export function AudioTrackNode({
       return;
     }
 
-    // Update `src` in state of corresponding node
-    // See https://reactflow.dev/examples/nodes/update-node
-    // and https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
+    // https://reactflow.dev/examples/nodes/update-node, https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
     updateNode(id, { src: URL.createObjectURL(files[0]) });
   }
 

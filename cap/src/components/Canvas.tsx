@@ -7,13 +7,12 @@ import {
   SelectionMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { useShallow } from "zustand/shallow";
 
-import { ColorModeButton, useColorMode } from "./ui/color-mode";
-
-import { shallow } from "zustand/shallow";
 import useCustomStore from "../store";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
+import { ColorModeButton, useColorMode } from "./ui/color-mode";
 
 /**
  * Issues
@@ -22,20 +21,26 @@ import DevTools from "./debug/Devtools";
 
 export default function Canvas() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
-    useCustomStore((state) => state, shallow);
+    useCustomStore(
+      useShallow((s) => ({
+        nodes: s.nodes,
+        edges: s.edges,
+        onNodesChange: s.onNodesChange,
+        onEdgesChange: s.onEdgesChange,
+        onConnect: s.onConnect,
+      })),
+    );
 
-  const { colorMode } = useColorMode();
-
-  console.log(colorMode);
+  const { colorMode } = useColorMode(); // [Bug] Redundant rerender
 
   return (
     <ReactFlow
-      colorMode={colorMode}
+      colorMode={colorMode} // [Bug] Redundant rerender
       nodes={nodes}
       edges={edges}
       fitView
       fitViewOptions={{ maxZoom: 1 }}
-      onNodesChange={onNodesChange}
+      onNodesChange={onNodesChange} // [Bug] Redundant rerender
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       nodeTypes={NODE_TYPES}
