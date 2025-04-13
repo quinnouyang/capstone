@@ -27,3 +27,13 @@ export function createAudioNodeSource(el: HTMLAudioElement) {
   SOURCES.set(el.id, srcNode);
   srcNode.connect(CTX.destination);
 }
+
+export function play(id: string) {
+  const srcNode = SOURCES.get(id);
+  if (!srcNode) {
+    console.warn("Could not find audio source", id);
+    return;
+  }
+
+  srcNode.mediaElement.play();
+}

@@ -12,7 +12,7 @@ import {
 import { ChangeEvent, useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 
-import { createAudioNodeSource } from "../engine/core";
+import { createAudioNodeSource, play } from "../engine/core";
 import useCustomStore from "../store";
 import { FileInput, FileUploadRoot } from "./ui/file-upload";
 import { genId } from "./utils";
@@ -44,12 +44,7 @@ export function AudioTrackNode({
   selected,
 }: NodeProps<AudioTrackNode>) {
   const ref = useRef<HTMLAudioElement>(null);
-  const { getNode, updateNodeData } = useCustomStore(
-    useShallow((s) => ({
-      getNode: s.getNode,
-      updateNodeData: s.updateNodeData,
-    })),
-  );
+  const updateNodeData = useCustomStore(useShallow((s) => s.updateNodeData));
   const outConnections = useNodeConnections({ handleType: "source" });
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
@@ -73,10 +68,10 @@ export function AudioTrackNode({
 
     el.addEventListener("ended", () => {
       outConnections.forEach(({ target }) => {
-        console.log(getNode(target));
+        play(target);
       });
     });
-  }, [ref]);
+  }, [ref, outConnections]);
 
   return (
     <Stack
@@ -107,15 +102,7 @@ export function AudioTrackNode({
       <FileUploadRoot accept="audio/*" onChange={onChange}>
         <FileInput />
       </FileUploadRoot>
-      <audio
-        ref={ref}
-        id={id}
-        controls
-        src={src}
-        onPlay={() => console.log("Playing", ref.current?.currentTime)}
-        onPause={() => console.log("Paused", ref.current?.currentTime)}
-        onEnded={() => console.log("Ended", ref.current?.currentTime)}
-      ></audio>
+      <audio ref={ref} id={id} controls src={src}></audio>
     </Stack>
   );
 }
