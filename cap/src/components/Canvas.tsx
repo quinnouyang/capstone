@@ -1,5 +1,3 @@
-import { useRef } from "react";
-
 import {
   Background,
   Controls,
@@ -23,8 +21,6 @@ import DevTools from "./debug/Devtools";
  */
 
 export default function Canvas() {
-  const ref = useRef<HTMLDivElement>(null);
-
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
     useCustomStore((state) => state, shallow);
 
@@ -34,7 +30,6 @@ export default function Canvas() {
 
   return (
     <ReactFlow
-      ref={ref}
       colorMode={colorMode}
       nodes={nodes}
       edges={edges}
