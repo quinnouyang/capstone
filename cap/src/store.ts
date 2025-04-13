@@ -35,59 +35,57 @@ export type AppState = {
 /**
  * Custom `useStore`: https://reactflow.dev/api-reference/hooks/use-store.
  */
-const useCustomStore = createWithEqualityFn<AppState>(
-  (set, get): AppState => ({
-    nodes: INIT_NODES,
-    edges: INIT_EDGES,
-    nodeCount: INIT_NODES.length,
-    edgeCount: INIT_EDGES.length,
+const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
+  nodes: INIT_NODES,
+  edges: INIT_EDGES,
+  nodeCount: INIT_NODES.length,
+  edgeCount: INIT_EDGES.length,
 
-    onNodesChange: (changes) => {
-      set({
-        nodes: applyNodeChanges(changes, get().nodes),
-      });
-    },
-    onEdgesChange: (changes) => {
-      set({
-        edges: applyEdgeChanges(changes, get().edges),
-      });
-    },
-    onConnect: (connection) => {
-      set({
-        edges: addEdge(connection, get().edges),
-      });
-      get().increaseEdgeCount();
-    },
-    setNodes: (nodes) => {
-      set({ nodes });
-    },
-    setEdges: (edges) => {
-      set({ edges });
-    },
-    increaseNodeCount: () => {
-      set(({ nodeCount }) => ({
-        nodeCount: ++nodeCount,
-      }));
-    },
-    increaseEdgeCount: () => {
-      set(({ edgeCount }) => ({
-        edgeCount: ++edgeCount,
-      }));
-    },
-    addNodes: (nodes) => {
-      set({ nodes: get().nodes.concat(nodes) });
-    },
-    addEdges: (edges) => {
-      set({ edges: get().edges.concat(edges) });
-    },
-    updateNode(id, data) {
-      set({
-        nodes: get().nodes.map((node) =>
-          node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
-        ),
-      });
-    },
-  }),
-);
+  onNodesChange: (changes) => {
+    set({
+      nodes: applyNodeChanges(changes, get().nodes),
+    });
+  },
+  onEdgesChange: (changes) => {
+    set({
+      edges: applyEdgeChanges(changes, get().edges),
+    });
+  },
+  onConnect: (connection) => {
+    set({
+      edges: addEdge(connection, get().edges),
+    });
+    get().increaseEdgeCount();
+  },
+  setNodes: (nodes) => {
+    set({ nodes });
+  },
+  setEdges: (edges) => {
+    set({ edges });
+  },
+  increaseNodeCount: () => {
+    set(({ nodeCount }) => ({
+      nodeCount: ++nodeCount,
+    }));
+  },
+  increaseEdgeCount: () => {
+    set(({ edgeCount }) => ({
+      edgeCount: ++edgeCount,
+    }));
+  },
+  addNodes: (nodes) => {
+    set({ nodes: get().nodes.concat(nodes) });
+  },
+  addEdges: (edges) => {
+    set({ edges: get().edges.concat(edges) });
+  },
+  updateNode(id, data) {
+    set({
+      nodes: get().nodes.map((node) =>
+        node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
+      ),
+    });
+  },
+}));
 
 export default useCustomStore;
