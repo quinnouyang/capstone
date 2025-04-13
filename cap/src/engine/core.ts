@@ -1,14 +1,20 @@
 const CTX = new AudioContext();
 const SOURCES = new Map<string, MediaElementAudioSourceNode>();
 
-export function play() {
-  if (CTX.state === "suspended") CTX.resume();
-  else console.warn("AudioContext is already playing", CTX);
-}
+CTX.suspend();
 
-export function pause() {
-  if (CTX.state === "running") CTX.suspend();
-  else console.warn("AudioContext is already paused", CTX);
+// export function play() {
+//   if (CTX.state === "suspended") CTX.resume();
+//   else console.warn("AudioContext is already playing", CTX);
+// }
+
+// export function pause() {
+//   if (CTX.state === "running") CTX.suspend();
+//   else console.warn("AudioContext is already paused", CTX);
+// }
+
+export function toggleCtxState() {
+  CTX.state === "running" ? CTX.suspend() : CTX.resume();
 }
 
 export function createAudioNodeSource(el: HTMLAudioElement) {
@@ -19,6 +25,5 @@ export function createAudioNodeSource(el: HTMLAudioElement) {
 
   const srcNode = CTX.createMediaElementSource(el);
   SOURCES.set(el.id, srcNode);
-
   srcNode.connect(CTX.destination);
 }

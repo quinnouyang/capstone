@@ -12,6 +12,7 @@ import {
 import { createWithEqualityFn } from "zustand/traditional";
 import { type AudioTrackNode } from "./components/AudioTrackNode";
 import { INIT_EDGES, INIT_NODES } from "./components/consts";
+import { toggleCtxState } from "./engine/core";
 
 export type AppState = {
   nodes: AudioTrackNode[];
@@ -19,6 +20,10 @@ export type AppState = {
   nodeCount: number;
   edgeCount: number;
 
+  isPlaying: boolean;
+
+  getNode: (id: string) => AudioTrackNode;
+  getEdge: (id: string) => Edge;
   addNodes: (nodes: AudioTrackNode | AudioTrackNode[]) => void;
   addEdges: (edges: Edge[]) => void;
   addEdge: (edge: Edge | Connection) => void;
@@ -29,6 +34,8 @@ export type AppState = {
 
   updateNodeData: (id: string, data: AudioTrackNode["data"]) => void;
   refreshCounts: () => void;
+
+  togglePlay: () => void;
 };
 
 /**
@@ -42,6 +49,18 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
   nodeCount: INIT_NODES.length,
   edgeCount: INIT_EDGES.length,
 
+  isPlaying: false,
+
+  getNode: (id) => {
+    const node = get().nodes.find((n) => n.id === id);
+    if (!node) throw Error(`Could not find node of ID ${id}`);
+    return node;
+  },
+  getEdge: (id) => {
+    const edge = get().edges.find((e) => e.id === id);
+    if (!edge) throw Error(`Could not find edge of ID ${id}`);
+    return edge;
+  },
   addNodes: (nodes) => {
     set({ nodes: get().nodes.concat(nodes) });
     get().refreshCounts();
@@ -84,6 +103,11 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
       nodeCount: get().nodes.length,
       edgeCount: get().edges.length,
     });
+  },
+
+  togglePlay: () => {
+    set({ isPlaying: !get().isPlaying });
+    toggleCtxState();
   },
 }));
 

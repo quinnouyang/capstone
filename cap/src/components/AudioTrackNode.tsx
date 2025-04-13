@@ -6,11 +6,13 @@ import {
   NodeResizer,
   NodeToolbar,
   Position,
+  useNodeConnections,
   type XYPosition,
 } from "@xyflow/react";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useEffect, useRef } from "react";
 import { useShallow } from "zustand/shallow";
 
+import { createAudioNodeSource } from "../engine/core";
 import useCustomStore from "../store";
 import { FileInput, FileUploadRoot } from "./ui/file-upload";
 import { genId } from "./utils";
@@ -42,7 +44,13 @@ export function AudioTrackNode({
   selected,
 }: NodeProps<AudioTrackNode>) {
   const ref = useRef<HTMLAudioElement>(null);
-  const updateNodeData = useCustomStore(useShallow((s) => s.updateNodeData));
+  const { getNode, updateNodeData } = useCustomStore(
+    useShallow((s) => ({
+      getNode: s.getNode,
+      updateNodeData: s.updateNodeData,
+    })),
+  );
+  const outConnections = useNodeConnections({ handleType: "source" });
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
     if (!files || !files[0]) {
@@ -54,14 +62,21 @@ export function AudioTrackNode({
     updateNodeData(id, { src: URL.createObjectURL(files[0]) });
   }
 
-  // useEffect(() => {
-  //   if (!ref.current) {
-  //     console.warn("AudioTrackNode: ref is null");
-  //     return;
-  //   }
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) {
+      console.warn("AudioTrackNode: ref is null");
+      return;
+    }
 
-  //   createAudioNodeSource(ref.current);
-  // }, []);
+    createAudioNodeSource(el);
+
+    el.addEventListener("ended", () => {
+      outConnections.forEach(({ target }) => {
+        console.log(getNode(target));
+      });
+    });
+  }, [ref]);
 
   return (
     <Stack
@@ -92,7 +107,15 @@ export function AudioTrackNode({
       <FileUploadRoot accept="audio/*" onChange={onChange}>
         <FileInput />
       </FileUploadRoot>
-      <audio ref={ref} id={id} controls src={src}></audio>
+      <audio
+        ref={ref}
+        id={id}
+        controls
+        src={src}
+        onPlay={() => console.log("Playing", ref.current?.currentTime)}
+        onPause={() => console.log("Paused", ref.current?.currentTime)}
+        onEnded={() => console.log("Ended", ref.current?.currentTime)}
+      ></audio>
     </Stack>
   );
 }

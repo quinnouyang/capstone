@@ -14,6 +14,7 @@ import { useShallow } from "zustand/shallow";
 import { useCallback } from "react";
 import useCustomStore from "../store";
 import { initNode } from "./AudioTrackNode";
+import PlayPause from "./PlayPause";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
 import { ColorModeButton, useColorMode } from "./ui/color-mode";
@@ -104,6 +105,9 @@ export default function Canvas() {
     >
       <Panel position="top-right">
         <ColorModeButton />
+      </Panel>
+      <Panel position="bottom-center">
+        <PlayPause />
       </Panel>
       <MiniMap />
       <Controls />
