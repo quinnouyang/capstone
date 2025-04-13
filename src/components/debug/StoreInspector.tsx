@@ -20,7 +20,7 @@ export default function StoreInspector() {
         {nodeCount} nodes:
         {nodes.map(({ id, data }) => {
           return (
-            <div className="react-flow__devtools-nodeinfo">
+            <div key={id} className="react-flow__devtools-nodeinfo">
               <div>id: {id}</div>
               <div>data: {JSON.stringify(data, null, 2)}</div>
               <div>
@@ -37,7 +37,7 @@ export default function StoreInspector() {
         {edgeCount} edges:
         {edges.map(({ id, source, target }) => {
           return (
-            <div className="react-flow__devtools-nodeinfo">
+            <div key={id} className="react-flow__devtools-nodeinfo">
               <div>id: {id}</div>
               <div>source: {source}</div>
               <div>target: {target}</div>
