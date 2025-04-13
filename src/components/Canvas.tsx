@@ -20,11 +20,6 @@ import DevTools from "./debug/Devtools";
 import { ColorModeButton, useColorMode } from "./ui/color-mode";
 import { genId } from "./utils";
 
-/**
- * Issues
- * - Initial rerender from `onNodesChange` (when `INIT_NODES` is not empty) and `screenToFlowPosition`
- */
-
 export default function Canvas() {
   const {
     nodes,
@@ -52,7 +47,7 @@ export default function Canvas() {
     })),
   );
   const { colorMode } = useColorMode(); // [Bug] Redundant rerender
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow(); // [Bug] Redundant rerender
 
   const onConnectEnd = useCallback<OnConnectEnd>(
     (event, connectionState) => {
@@ -68,7 +63,6 @@ export default function Canvas() {
           x: clientX,
           y: clientY,
         }),
-        {},
       );
 
       const source = connectionState.fromNode.id;

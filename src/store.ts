@@ -14,7 +14,9 @@ import { type AudioTrackNode } from "./components/AudioTrackNode";
 import { INIT_EDGES, INIT_NODES } from "./components/consts";
 
 export type AppState = {
-  // ReactFlow
+  /**
+   * Graph
+   */
   nodes: AudioTrackNode[];
   edges: Edge[];
   nodeCount: number;
@@ -34,13 +36,16 @@ export type AppState = {
   refreshCounts: () => void;
   getOutputNodes: (id: string) => AudioTrackNode[];
 
-  // Audio
+  /**
+   * Web Audio API
+   */
   ctx: AudioContext;
   isPlaying: boolean;
+  nodeIdToEl: Map<string, HTMLAudioElement>;
+
   togglePlay: () => void;
   createAudioNodeSource: (el: HTMLAudioElement) => void;
   play: (id: string) => void;
-  nodeIdToEl: Map<string, HTMLAudioElement>;
 };
 
 /**
@@ -49,7 +54,9 @@ export type AppState = {
  * Global state, excluding a few that require hooks (e.g. `useReactFlow`)
  */
 const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
-  // ReactFlow
+  /**
+   * ReactFlow
+   */
   nodes: INIT_NODES,
   edges: INIT_EDGES,
   nodeCount: INIT_NODES.length,
@@ -114,10 +121,14 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
       .map((e) => get().getNode(e.target));
   },
 
-  // Audio
+  /**
+   * Audio
+   */
   ctx: new AudioContext(), // [Decide] Init as suspended?
 
   isPlaying: false,
+  nodeIdToEl: new Map<string, HTMLAudioElement>(),
+
   togglePlay: () => {
     set({ isPlaying: !get().isPlaying });
     const ctx = get().ctx;
@@ -139,7 +150,6 @@ const useCustomStore = createWithEqualityFn<AppState>((set, get) => ({
     srcNode.currentTime = 0;
     srcNode.play();
   },
-  nodeIdToEl: new Map<string, HTMLAudioElement>(),
 }));
 
 export default useCustomStore;
