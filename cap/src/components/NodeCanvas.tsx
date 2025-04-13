@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import {
   Background,
@@ -7,14 +7,10 @@ import {
   Panel,
   ReactFlow,
   SelectionMode,
-  type ColorMode as FlowColorMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import {
-  ColorModeButton,
-  useColorMode as useChakraColorMode,
-} from "./ui/color-mode";
+import { ColorModeButton, useColorMode } from "./ui/color-mode";
 
 import { shallow } from "zustand/shallow";
 import useCustomStore from "../store";
@@ -31,20 +27,15 @@ export default function NodeCanvas() {
 
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect } =
     useCustomStore((state) => state, shallow);
+    
+  const { colorMode } = useColorMode();
 
-  const { colorMode: chakraColorMode } = useChakraColorMode();
-  const [flowColorMode, setFlowColorMode] =
-    useState<FlowColorMode>(chakraColorMode);
-
-  // Sync Chakra and ReactFlow color modes
-  useEffect(() => {
-    setFlowColorMode(chakraColorMode);
-  }, [chakraColorMode]);
+  console.log(colorMode);
 
   return (
     <ReactFlow
       ref={ref}
-      colorMode={flowColorMode}
+      colorMode={colorMode}
       nodes={nodes}
       edges={edges}
       fitView
