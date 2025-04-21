@@ -16,9 +16,9 @@ import ViewportLogger from "./ViewportLogger";
 
 export default function DevTools() {
   const [changeLoggerActive, setChangeLoggerActive] = useState(false);
-  const [nodeInspectorActive, setNodeInspectorActive] = useState(true);
-  const [edgeInspectorActive, setEdgeInspectorActive] = useState(true);
-  const [viewportLoggerActive, setViewportLoggerActive] = useState(true);
+  const [nodeInspectorActive, setNodeInspectorActive] = useState(false);
+  const [edgeInspectorActive, setEdgeInspectorActive] = useState(false);
+  const [viewportLoggerActive, setViewportLoggerActive] = useState(false);
   const [storeInspectorActive, setStoreInspectorActive] = useState(false);
 
   return (
