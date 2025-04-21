@@ -10,6 +10,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
+import { Button } from "@chakra-ui/react";
 import { useCallback } from "react";
 import useShallowStore, { type State } from "../store";
 import { initNode } from "./AudioTrackNode";
@@ -101,6 +102,9 @@ export default function Canvas() {
       </Panel>
       <Panel position="bottom-center">
         <PlayPause />
+        <Button onClick={() => addNodes(initNode(nodeCount, { x: 50, y: 50 }))}>
+          Add Node
+        </Button>
       </Panel>
       <MiniMap />
       <Controls />
