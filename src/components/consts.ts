@@ -5,9 +5,9 @@ import {
   initNode,
 } from "./AudioTrackNode";
 
-import src0 from "../../audio/apple/Antic-EncoreInfinitum.wav";
-import src1 from "../../audio/apple/Droplet-EncoreInfinitum.wav";
-import src2 from "../../audio/apple/Rebound-EncoreInfinitum.wav";
+import src0 from "../../assets/1.wav";
+import src1 from "../../assets/2.wav";
+import src2 from "../../assets/3.wav";
 
 export const INIT_NODES: AudioTrackNode[] = [
   initNode(0, { x: 0, y: 0 }, { src: src0 }),
