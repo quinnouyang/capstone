@@ -9,6 +9,7 @@ import {
   type OnNodesChange,
 } from "@xyflow/react";
 
+import { devtools } from "zustand/middleware";
 import { useShallow } from "zustand/shallow";
 import { createWithEqualityFn } from "zustand/traditional";
 import { type AudioTrackNode } from "./components/AudioTrackNode";
@@ -54,14 +55,15 @@ export type State = {
  *
  * Global state, excluding a few that require hooks (e.g. `useReactFlow`)
  */
-const useCustomStore = createWithEqualityFn<State>()((set, get) => ({
-  /**
-   * ReactFlow
-   */
-  nodes: INIT_NODES,
-  edges: INIT_EDGES,
-  nodeCount: INIT_NODES.length,
-  edgeCount: INIT_EDGES.length,
+const useCustomStore = createWithEqualityFn<State>()(
+  devtools((set, get) => ({
+    /**
+     * ReactFlow
+     */
+    nodes: INIT_NODES,
+    edges: INIT_EDGES,
+    nodeCount: INIT_NODES.length,
+    edgeCount: INIT_EDGES.length,
 
   getNode: (id) => {
     const node = get().nodes.find((n) => n.id === id);
