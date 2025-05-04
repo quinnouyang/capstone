@@ -13,19 +13,22 @@ import { ChangeEvent, useEffect, useRef } from "react";
 import type { State } from "../store";
 import useShallowStore from "../store";
 import { FileInput, FileUploadRoot } from "./ui/file-upload";
-import { genId } from "./utils";
+import { Slider } from "./ui/slider";
+import { formatTimestamp, genId } from "./utils";
 
-export type AudioTrackNode = Node<
-  {
-    src?: string;
-  },
-  "audioTrackNode"
->;
+type AudioTrackNodeData = {
+  src?: string;
+  el?: HTMLAudioElement;
+  duration: number;
+  currentTime: number;
+};
+
+export type AudioTrackNode = Node<AudioTrackNodeData, "audioTrackNode">;
 
 export function initNode(
   idx: number,
   position: XYPosition,
-  data = {},
+  data: AudioTrackNodeData = { duration: 0, currentTime: 0 },
 ): AudioTrackNode {
   return {
     id: genId(idx, "node"),
@@ -53,13 +56,17 @@ export function AudioTrackNode({
     useShallowStore(SELECTOR);
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
-    if (!files || !files[0]) {
-      console.warn("No file selected");
-      return;
-    }
+    if (!ref.current) return console.warn("AudioTrackNode: ref is null");
+    if (!files || !files[0]) return console.warn("No file selected");
 
     // https://reactflow.dev/examples/nodes/update-node, https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
-    updateNodeData(id, { ...data, src: URL.createObjectURL(files[0]) });
+    updateNodeData(id, {
+      ...data,
+      src: URL.createObjectURL(files[0]),
+      el: ref.current,
+      duration: ref.current.duration,
+      currentTime: ref.current.currentTime,
+    });
   }
 
   useEffect(() => {
@@ -67,6 +74,12 @@ export function AudioTrackNode({
     if (!el) return console.warn("AudioTrackNode: ref is null");
 
     createAudioNodeSource(el);
+    updateNodeData(id, {
+      ...data,
+      el,
+      duration: el.duration,
+      currentTime: el.currentTime,
+    });
   }, [ref]);
 
   useEffect(() => {
@@ -89,6 +102,7 @@ export function AudioTrackNode({
       borderColor={"black"}
       p={4}
       gap={4}
+      minW={data.duration || 0 * 100}
     >
       <Handle
         id="in"
@@ -110,6 +124,17 @@ export function AudioTrackNode({
         <FileInput />
       </FileUploadRoot>
       <audio ref={ref} id={id} controls src={data.src}></audio>
+      <Slider
+        marks={[
+          { value: 0, label: "0:00" },
+          {
+            value: data.duration || 100,
+            label: formatTimestamp(data.duration || -1),
+          },
+        ]}
+        value={[(() => data.currentTime)() || 0]}
+        max={data.duration || 100}
+      />
     </Stack>
   );
 }

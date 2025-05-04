@@ -15,3 +15,7 @@ export function genId(idx: number, name: string, suffix?: string): string {
   ids.add(id);
   return id;
 }
+
+export function formatTimestamp(seconds: number): string {
+  return `${Math.floor(Number(seconds / 60))}:${Math.ceil(seconds % 60)}`;
+}
