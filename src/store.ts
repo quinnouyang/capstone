@@ -11,31 +11,31 @@ import {
 
 import { useShallow } from "zustand/shallow";
 import { createWithEqualityFn } from "zustand/traditional";
-import { type AudioTrackNode } from "./components/AudioClipNode/AudioClipNode";
+import { type AudioClipNodeType } from "./components/AudioClipNode/types";
 import { INIT_EDGES, INIT_NODES } from "./components/consts";
 
 export type State = {
   /**
    * Graph
    */
-  nodes: AudioTrackNode[];
+  nodes: AudioClipNodeType[];
   edges: Edge[];
   nodeCount: number;
   edgeCount: number;
 
-  getNode: (id: string) => AudioTrackNode;
+  getNode: (id: string) => AudioClipNodeType;
   getEdge: (id: string) => Edge;
-  addNodes: (nodes: AudioTrackNode | AudioTrackNode[]) => void;
+  addNodes: (nodes: AudioClipNodeType | AudioClipNodeType[]) => void;
   addEdges: (edges: Edge[]) => void;
   addEdge: (edge: Edge | Connection) => void;
 
-  onNodesChange: OnNodesChange<AudioTrackNode>;
+  onNodesChange: OnNodesChange<AudioClipNodeType>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
 
-  updateNodeData: (id: string, data: AudioTrackNode["data"]) => void;
+  updateNodeData: (id: string, data: AudioClipNodeType["data"]) => void;
   refreshCounts: () => void;
-  getOutputNodes: (id: string) => AudioTrackNode[];
+  getOutputNodes: (id: string) => AudioClipNodeType[];
 
   /**
    * Web Audio API

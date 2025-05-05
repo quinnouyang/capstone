@@ -3,11 +3,11 @@ import { addEdge, type Edge } from "@xyflow/react";
 import src0 from "../../assets/1.wav";
 import src1 from "../../assets/2.wav";
 import src2 from "../../assets/3.wav";
-import ClipNode from "./AudioClipNode/AudioClipNode";
-import type { ClipNodeType } from "./AudioClipNode/types";
+import AudioClipNode from "./AudioClipNode/AudioClipNode";
+import type { AudioClipNodeType } from "./AudioClipNode/types";
 import { initNode } from "./AudioClipNode/utils";
 
-export const INIT_NODES: ClipNodeType[] = [
+export const INIT_NODES: AudioClipNodeType[] = [
   initNode(0, { x: 0, y: 0 }, { src: src0, duration: -3, currentTime: -2 }),
   initNode(1, { x: 800, y: 200 }, { src: src2, duration: -3, currentTime: -2 }),
   initNode(
@@ -60,5 +60,5 @@ export const INIT_EDGES: Edge[] = addEdge(
 );
 
 export const NODE_TYPES = {
-  audioTrackNode: ClipNode,
+  audioTrackNode: AudioClipNode,
 };

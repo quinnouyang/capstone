@@ -7,13 +7,13 @@ import { FileInput, FileUploadRoot } from "../ui/file-upload";
 import { Slider } from "../ui/slider";
 import { formatTimestamp } from "../utils";
 import ClipNodeWrapper from "./ClipNodeWrapper";
-import type { ClipNodeType } from "./types";
+import type { AudioClipNodeType } from "./types";
 
-export default function ClipNode({
+export default function AudioClipNode({
   id,
   data,
   selected,
-}: NodeProps<ClipNodeType>) {
+}: NodeProps<AudioClipNodeType>) {
   const ref = useRef<HTMLAudioElement>(null);
   const { updateNodeData, getOutputNodes, createAudioNodeSource, play } =
     useShallowStore((s: State) => ({
