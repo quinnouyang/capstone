@@ -11,7 +11,7 @@ import {
 
 import { useShallow } from "zustand/shallow";
 import { createWithEqualityFn } from "zustand/traditional";
-import { type AudioTrackNode } from "./components/AudioTrackNode";
+import { type AudioTrackNode } from "./components/AudioClipNode/AudioClipNode";
 import { INIT_EDGES, INIT_NODES } from "./components/consts";
 
 export type State = {

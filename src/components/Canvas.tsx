@@ -13,10 +13,10 @@ import "@xyflow/react/dist/style.css";
 import { Button } from "@chakra-ui/react";
 import { useCallback } from "react";
 import useShallowStore, { type State } from "../store";
-import { initNode } from "./AudioTrackNode";
-import PlayPause from "./PlayPause";
+import { initNode } from "./AudioClipNode/utils";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
+import PlayPause from "./PlayPause";
 import { ColorModeButton, useColorMode } from "./ui/color-mode";
 import { genId } from "./utils";
 
