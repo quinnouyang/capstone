@@ -91,6 +91,14 @@ export function AudioTrackNode({
         play(id);
       });
     });
+
+    return () => {
+      el.removeEventListener("ended", () => {
+        getOutputNodes(id).forEach(({ id }) => {
+          play(id);
+        });
+      });
+    };
   }, [ref, getOutputNodes]);
 
   return (
