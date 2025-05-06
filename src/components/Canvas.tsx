@@ -12,7 +12,7 @@ import "@xyflow/react/dist/style.css";
 
 import { Button } from "@chakra-ui/react";
 import { useCallback } from "react";
-import useShallowStore, { type State } from "../store";
+import useShallowStore, { type State } from "../store/store";
 import { initNode } from "./AudioClipNode/utils";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";

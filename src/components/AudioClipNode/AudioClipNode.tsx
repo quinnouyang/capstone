@@ -1,7 +1,7 @@
 import { NodeProps, NodeResizer, NodeToolbar } from "@xyflow/react";
 import { ChangeEvent, useEffect, useRef } from "react";
 
-import useShallowStore, { type State } from "../../store";
+import useShallowStore, { type State } from "../../store/store";
 import { FileInput, FileUploadRoot } from "../ui/file-upload";
 import ClipNodeWrapper from "./ClipNodeWrapper";
 import type { AudioClipNodeType } from "./types";

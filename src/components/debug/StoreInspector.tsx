@@ -1,4 +1,4 @@
-import useShallowStore from "../../store";
+import useShallowStore from "../../store/store";
 
 export default function StoreInspector() {
   const {
