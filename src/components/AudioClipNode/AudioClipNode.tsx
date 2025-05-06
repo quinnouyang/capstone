@@ -37,7 +37,6 @@ export default function AudioClipNode({
 
     updateNodeData(id, {
       ...data,
-      el,
       srcNode: createAudioNodeSource(el),
     });
   }, [ref]);

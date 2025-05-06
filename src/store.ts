@@ -169,7 +169,6 @@ const useCustomStore = createWithEqualityFn<State>()(
       play: (id) => {
         const srcNode = get().getNode(id).data.srcNode?.mediaElement;
         if (!srcNode) return console.warn("Could not find audio source", id);
-        srcNode.currentTime = 0;
         srcNode.play();
       },
       setCurrTime: (time) => {
