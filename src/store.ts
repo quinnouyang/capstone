@@ -42,12 +42,12 @@ export type State = {
    */
   ctx: AudioContext;
   isPlaying: boolean;
-  nodeIdToEl: Map<string, HTMLAudioElement>;
+  nodeIdToSrcNode: Map<string, MediaElementAudioSourceNode>;
   currTime: number;
   totalTime: number;
 
   togglePlay: () => void;
-  createAudioNodeSource: (el: HTMLAudioElement) => void;
+  createAudioNodeSource: (el: HTMLAudioElement) => MediaElementAudioSourceNode;
   play: (id: string) => void;
   setCurrTime: (time: number) => void;
   setTotalTime: (time: number) => void;
@@ -139,7 +139,7 @@ const useCustomStore = createWithEqualityFn<State>()(
        */
       ctx,
       isPlaying: false,
-      nodeIdToEl: new Map<string, HTMLAudioElement>(),
+      nodeIdToSrcNode: new Map<string, MediaElementAudioSourceNode>(),
       currTime: 0,
       totalTime: 0,
 
@@ -151,19 +151,23 @@ const useCustomStore = createWithEqualityFn<State>()(
         if (firstId) get().play(firstId);
       },
       createAudioNodeSource: (el) => {
-        if (get().nodeIdToEl.has(el.id))
-          return console.warn("Audio source already exists", el.id);
+        if (get().nodeIdToSrcNode.has(el.id)) {
+          console.warn("Audio source already exists", el.id);
+          return get().nodeIdToSrcNode.get(el.id)!;
+        }
 
         const srcNode = get().ctx.createMediaElementSource(el);
         srcNode.connect(get().ctx.destination);
 
         // https://zustand.docs.pmnd.rs/guides/maps-and-sets-usage (Necessary?)
-        set(({ nodeIdToEl }) => ({
-          nodeIdToEl: new Map(nodeIdToEl).set(el.id, el),
+        set(({ nodeIdToSrcNode: nodeIdToEl }) => ({
+          nodeIdToSrcNode: new Map(nodeIdToEl).set(el.id, srcNode),
         }));
+
+        return srcNode;
       },
       play: (id) => {
-        const srcNode = get().nodeIdToEl.get(id);
+        const srcNode = get().getNode(id).data.srcNode?.mediaElement;
         if (!srcNode) return console.warn("Could not find audio source", id);
         srcNode.currentTime = 0;
         srcNode.play();

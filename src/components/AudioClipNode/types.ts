@@ -1,10 +1,9 @@
 import type { Node } from "@xyflow/react";
 
 export type AudioClipData = {
-  src?: string;
-  el?: HTMLAudioElement;
-  duration: number;
-  currentTime: number;
+  src: string;
+  file?: File;
+  srcNode?: MediaElementAudioSourceNode;
 };
 
 export type AudioClipNodeType = Node<AudioClipData, "audioTrackNode">;

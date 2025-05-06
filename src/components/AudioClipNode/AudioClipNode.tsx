@@ -27,10 +27,7 @@ export default function AudioClipNode({
     // https://reactflow.dev/examples/nodes/update-node, https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
     updateNodeData(id, {
       ...data,
-      src: URL.createObjectURL(files[0]),
-      el: ref.current,
-      duration: ref.current.duration,
-      currentTime: ref.current.currentTime,
+      file: files[0],
     });
   }
 
@@ -38,12 +35,10 @@ export default function AudioClipNode({
     const el = ref.current;
     if (!el) return console.warn("AudioTrackNode: ref is null");
 
-    createAudioNodeSource(el);
     updateNodeData(id, {
       ...data,
       el,
-      duration: el.duration,
-      currentTime: el.currentTime,
+      srcNode: createAudioNodeSource(el),
     });
   }, [ref]);
 

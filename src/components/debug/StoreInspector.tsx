@@ -8,7 +8,7 @@ export default function StoreInspector() {
     edgeCount,
     ctx,
     isPlaying,
-    nodeIdToEl,
+    nodeIdToSrcNode: nodeIdToEl,
     getOutputNodes,
   } = useShallowStore((s) => s);
 
