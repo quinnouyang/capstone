@@ -5,7 +5,7 @@ import type { AudioClipNodeType } from "./types";
 export function initNode(
   idx: number,
   position: XYPosition,
-  src: string = "",
+  src?: string,
 ): AudioClipNodeType {
   return {
     id: genId(idx, "node"),

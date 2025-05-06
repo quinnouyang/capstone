@@ -1,7 +1,7 @@
 import type { Node } from "@xyflow/react";
 
 export type AudioClipData = {
-  src: string;
+  src?: string;
   file?: File;
   srcNode?: MediaElementAudioSourceNode;
 };

@@ -24,9 +24,9 @@ export default function AudioClipNode({
     if (!ref.current) return console.warn("AudioTrackNode: ref is null");
     if (!files || !files[0]) return console.warn("No file selected");
 
-    // https://reactflow.dev/examples/nodes/update-node, https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
     updateNodeData(id, {
       ...data,
+      src: URL.createObjectURL(files[0]),
       file: files[0],
     });
   }
