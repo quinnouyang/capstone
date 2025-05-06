@@ -1,11 +1,8 @@
-import { Button } from "@chakra-ui/react";
 import { NodeProps, NodeResizer, NodeToolbar } from "@xyflow/react";
 import { ChangeEvent, useEffect, useRef } from "react";
 
 import useShallowStore, { type State } from "../../store";
 import { FileInput, FileUploadRoot } from "../ui/file-upload";
-import { Slider } from "../ui/slider";
-import { formatTimestamp } from "../utils";
 import ClipNodeWrapper from "./ClipNodeWrapper";
 import type { AudioClipNodeType } from "./types";
 
@@ -72,24 +69,12 @@ export default function AudioClipNode({
   return (
     <ClipNodeWrapper>
       <NodeToolbar>
-        <Button>TEST</Button>
+        <FileUploadRoot accept="audio/*" onChange={onChange}>
+          <FileInput />
+        </FileUploadRoot>
       </NodeToolbar>
       <NodeResizer isVisible={selected} />
-      <FileUploadRoot accept="audio/*" onChange={onChange}>
-        <FileInput />
-      </FileUploadRoot>
       <audio ref={ref} id={id} controls src={data.src}></audio>
-      <Slider
-        marks={[
-          { value: 0, label: "0:00" },
-          {
-            value: data.duration || 100,
-            label: formatTimestamp(data.duration || -1),
-          },
-        ]}
-        value={[(() => data.currentTime)() || 0]}
-        max={data.duration || 100}
-      />
     </ClipNodeWrapper>
   );
 }
