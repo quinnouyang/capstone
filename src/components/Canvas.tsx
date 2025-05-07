@@ -17,7 +17,7 @@ import { initNode } from "./AudioClipNode/utils";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
 import PlayPause from "./PlayPause";
-import { ColorModeButton, useColorMode } from "./ui/color-mode";
+import { useColorMode } from "./ui/color-mode";
 import { genId } from "./utils";
 
 const SELECTOR = (s: State) => ({
@@ -100,9 +100,6 @@ export default function Canvas() {
       zoomOnDoubleClick={false}
       proOptions={{ hideAttribution: true }}
     >
-      <Panel position="top-right">
-        <ColorModeButton />
-      </Panel>
       <Panel position="bottom-center">
         <PlayPause />
         <Button onClick={() => addNodes(initNode(nodeCount, { x: 50, y: 50 }))}>
