@@ -1,5 +1,5 @@
 import { IconButton } from "@chakra-ui/react";
-import { LuPause, LuPlay } from "react-icons/lu";
+import { BiPause, BiPlay } from "react-icons/bi";
 import type { State } from "../store/store";
 import useShallowStore from "../store/store";
 
@@ -13,7 +13,7 @@ export default function PlayPause() {
 
   return (
     <IconButton aria-label="switch" onClick={togglePlayPause}>
-      {isPlaying ? <LuPause /> : <LuPlay />}
+      {isPlaying ? <BiPlay /> : <BiPause />}
     </IconButton>
   );
 }
