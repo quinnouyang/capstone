@@ -2,18 +2,16 @@ import { Flex, HStack, Separator } from "@chakra-ui/react";
 import {
   BiCodeAlt,
   BiFastForward,
-  BiPause,
-  BiPlay,
-  BiPlus,
   BiRewind,
   BiSidebar,
   BiZoomIn,
   BiZoomOut,
 } from "react-icons/bi";
 import STORE_SELECTORS from "../../store/store";
-import { initNode } from "../AudioClipNode/utils";
 import { ColorModeButton } from "../ui/color-mode";
+import AddNodeButton from "./AddNodeButton";
 import PlaybackTime from "./PlaybackTime";
+import PlayPauseButton from "./PlayPauseButton";
 import TooltipButton from "./TooltipButton";
 
 function VerticalSeparator() {
@@ -21,12 +19,8 @@ function VerticalSeparator() {
 }
 
 export default function Toolbar() {
-  const isPlaying = STORE_SELECTORS.isPlaying();
-  const togglePlaying = STORE_SELECTORS.togglePlaying();
   const toggleSidebar = STORE_SELECTORS.toggleSidebar();
   const toggleDevtools = STORE_SELECTORS.toggleDevtools();
-  const addNodes = STORE_SELECTORS.addNodes();
-  const nodeCount = STORE_SELECTORS.nodeCount();
 
   return (
     <Flex
@@ -45,9 +39,7 @@ export default function Toolbar() {
 
         <VerticalSeparator />
 
-        <TooltipButton label="Toggle playback" onClick={() => togglePlaying()}>
-          {isPlaying ? <BiPause /> : <BiPlay />}
-        </TooltipButton>
+        <PlayPauseButton />
         {/* <TooltipButton label="Stop" onClick={() => {}}>
           <BiStop />
         </TooltipButton> */}
@@ -67,12 +59,7 @@ export default function Toolbar() {
       </HStack>
 
       <HStack position="absolute" left="50%" transform="translateX(-50%)">
-        <TooltipButton
-          label="Add Node"
-          onClick={() => addNodes([initNode(nodeCount, { x: 50, y: 50 })])}
-        >
-          <BiPlus />
-        </TooltipButton>
+        <AddNodeButton />
       </HStack>
       {/* <TooltipButton label="Delete Node" onClick={() => {}}>
           <BiTrash />
