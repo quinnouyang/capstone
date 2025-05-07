@@ -14,7 +14,7 @@ export default function Sidebar() {
       shadow={sidebarOpen ? "md" : undefined}
       transform={sidebarOpen ? "translateX(0)" : "translateX(-100%)"}
       transition="transform 0.3s ease-in-out"
-      zIndex={1}
+      zIndex={2}
       overflow="hidden"
     >
       {

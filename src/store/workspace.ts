@@ -19,7 +19,7 @@ export const createWorkspaceSlice: StateCreator<
   WorkspaceSlice
 > = (set) => {
   return {
-    sidebarOpen: false,
+    sidebarOpen: true,
     devtoolsOpen: false,
 
     toggleSidebar: () => {

@@ -1,4 +1,4 @@
-import { Box, Flex, VStack } from "@chakra-ui/react";
+import { Flex, HStack, Separator } from "@chakra-ui/react";
 import {
   BiCodeAlt,
   BiFastForward,
@@ -15,6 +15,10 @@ import { initNode } from "../AudioClipNode/utils";
 import { ColorModeButton } from "../ui/color-mode";
 import TooltipButton from "./TooltipButton";
 
+function VerticalSeparator() {
+  return <Separator orientation="vertical" h={8} m={2} />;
+}
+
 export default function Toolbar() {
   const isPlaying = STORE_SELECTORS.isPlaying();
   const togglePlaying = STORE_SELECTORS.togglePlaying();
@@ -24,20 +28,29 @@ export default function Toolbar() {
   const nodeCount = STORE_SELECTORS.nodeCount();
 
   return (
-    <Flex bg="bg.panel" align="center" shadow="md">
-      <VStack gap={2} p={2}>
+    <Flex
+      bg="bg.panel"
+      align="center"
+      justify="space-between"
+      shadow="sm"
+      zIndex={1}
+      gap={2}
+      p={2}
+    >
+      <HStack>
         <TooltipButton label="Toggle Sidebar" onClick={toggleSidebar}>
           <BiSidebar />
         </TooltipButton>
-      </VStack>
-      {/* Transport Controls */}
-      <Flex gap={2}>
+      </HStack>
+
+      <HStack>
         <TooltipButton label="Play/Pause" onClick={() => togglePlaying()}>
           {isPlaying ? <BiPause /> : <BiPlay />}
         </TooltipButton>
         {/* <TooltipButton label="Stop" onClick={() => {}}>
           <BiStop />
         </TooltipButton> */}
+        <VerticalSeparator />
         <TooltipButton label="Rewind" onClick={() => {}}>
           <BiRewind />
         </TooltipButton>
@@ -47,29 +60,29 @@ export default function Toolbar() {
         {/* <TooltipButton label="Repeat" onClick={() => {}}>
           <BiRepeat />
         </TooltipButton> */}
-      </Flex>
+      </HStack>
 
-      {/* Node Controls */}
-      <Flex gap={2}>
+      <HStack>
         <TooltipButton
           label="Add Node"
           onClick={() => addNodes([initNode(nodeCount, { x: 50, y: 50 })])}
         >
           <BiPlus />
         </TooltipButton>
-        {/* <TooltipButton label="Delete Node" onClick={() => {}}>
+      </HStack>
+      {/* <TooltipButton label="Delete Node" onClick={() => {}}>
           <BiTrash />
         </TooltipButton> */}
-      </Flex>
 
-      <Box flex="1" />
-
-      {/* View + File Controls */}
-      <Flex gap={2}>
+      <HStack>
         {import.meta.env.DEV && (
-          <TooltipButton label="Toggle Devtools" onClick={toggleDevtools}>
-            <BiCodeAlt />
-          </TooltipButton>
+          <>
+            <TooltipButton label="Toggle Devtools" onClick={toggleDevtools}>
+              <BiCodeAlt />
+            </TooltipButton>
+
+            <VerticalSeparator />
+          </>
         )}
         <ColorModeButton />
         <TooltipButton label="Zoom In" onClick={() => {}}>
@@ -81,7 +94,7 @@ export default function Toolbar() {
         {/* <TooltipButton label="Export" onClick={() => {}}>
           <BiExport />
         </TooltipButton> */}
-      </Flex>
+      </HStack>
     </Flex>
   );
 }
