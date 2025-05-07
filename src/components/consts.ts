@@ -4,8 +4,7 @@ import src0 from "../../assets/1.wav";
 import src2 from "../../assets/3.wav";
 import src1 from "../../assets/5.wav";
 import AudioClipNode from "./AudioClipNode/AudioClipNode";
-import type { AudioClipNodeType } from "./AudioClipNode/types";
-import { initNode } from "./AudioClipNode/utils";
+import { initNode, type AudioClipNodeType } from "./AudioClipNode/utils";
 
 export const INIT_NODES: AudioClipNodeType[] = [
   initNode(0, { x: 0, y: 0 }, src0),

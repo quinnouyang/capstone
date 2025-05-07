@@ -8,7 +8,7 @@ import {
   type OnNodesChange,
 } from "@xyflow/react";
 import { StateCreator } from "zustand";
-import type { AudioClipNodeType } from "../components/AudioClipNode/types";
+import type { AudioClipNodeType } from "../components/AudioClipNode/utils";
 import { INIT_EDGES, INIT_NODES } from "../components/consts";
 import type { WebAudioSlice } from "./webAudio";
 
