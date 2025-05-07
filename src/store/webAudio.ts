@@ -1,19 +1,23 @@
 import { StateCreator } from "zustand";
 import type { ReactFlowSlice } from "./reactFlow";
 
-export type WebAudioSlice = {
+type State = {
   ctx: AudioContext;
   isPlaying: boolean;
   nodeIdToSrcNode: Map<string, MediaElementAudioSourceNode>;
   currTime: number;
   totalTime: number;
+};
 
+type Functions = {
   togglePlay: () => void;
   createAudioNodeSource: (el: HTMLAudioElement) => MediaElementAudioSourceNode;
   play: (id: string) => void;
   setCurrTime: (time: number) => void;
   setTotalTime: (time: number) => void;
 };
+
+export type WebAudioSlice = State & Functions;
 
 export const createWebAudioSlice: StateCreator<
   ReactFlowSlice & WebAudioSlice,

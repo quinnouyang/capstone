@@ -2,7 +2,6 @@ import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
-  type Connection,
   type Edge,
   type OnConnect,
   type OnEdgesChange,
@@ -13,17 +12,21 @@ import type { AudioClipNodeType } from "../components/AudioClipNode/types";
 import { INIT_EDGES, INIT_NODES } from "../components/consts";
 import type { WebAudioSlice } from "./webAudio";
 
-export type ReactFlowSlice = {
+type State = {
   nodes: AudioClipNodeType[];
   edges: Edge[];
   nodeCount: number;
   edgeCount: number;
 
+  idToNodes: Map<string, AudioClipNodeType>;
+  idToEdges: Map<string, Edge>;
+};
+
+type Functions = {
   getNode: (id: string) => AudioClipNodeType;
   getEdge: (id: string) => Edge;
-  addNodes: (nodes: AudioClipNodeType | AudioClipNodeType[]) => void;
+  addNodes: (nodes: AudioClipNodeType[]) => void;
   addEdges: (edges: Edge[]) => void;
-  addEdge: (edge: Edge | Connection) => void;
 
   onNodesChange: OnNodesChange<AudioClipNodeType>;
   onEdgesChange: OnEdgesChange;
@@ -33,6 +36,8 @@ export type ReactFlowSlice = {
   refreshCounts: () => void;
   getOutputNodes: (id: string) => AudioClipNodeType[];
 };
+
+export type ReactFlowSlice = State & Functions;
 
 export const createReactFlowSlice: StateCreator<
   ReactFlowSlice & WebAudioSlice,
@@ -44,27 +49,39 @@ export const createReactFlowSlice: StateCreator<
   edges: INIT_EDGES,
   nodeCount: INIT_NODES.length,
   edgeCount: INIT_EDGES.length,
+  idToNodes: new Map(INIT_NODES.map((node) => [node.id, node])),
+  idToEdges: new Map(INIT_EDGES.map((edge) => [edge.id, edge])),
 
   getNode: (id) => {
-    const node = get().nodes.find((n) => n.id === id);
+    const node = get().idToNodes.get(id);
     if (!node) throw Error(`Could not find node of ID ${id}`);
     return node;
   },
   getEdge: (id) => {
-    const edge = get().edges.find((e) => e.id === id);
+    const edge = get().idToEdges.get(id);
     if (!edge) throw Error(`Could not find edge of ID ${id}`);
     return edge;
   },
   addNodes: (nodes) => {
-    set({ nodes: get().nodes.concat(nodes) });
+    const newIdToNodes = new Map(get().idToNodes);
+    nodes.forEach((node) => {
+      get().idToNodes.set(node.id, node);
+    });
+    set({ nodes: Array.from(newIdToNodes.values()) });
+    set({
+      idToNodes: newIdToNodes,
+    });
     get().refreshCounts();
   },
   addEdges: (edges) => {
-    set({ edges: get().edges.concat(edges) });
-    get().refreshCounts();
-  },
-  addEdge: (edge) => {
-    set({ edges: addEdge(edge, get().edges) });
+    const newIdToEdges = new Map(get().idToEdges);
+    edges.forEach((edge) => {
+      get().idToEdges.set(edge.id, edge);
+    });
+    set({ edges: Array.from(newIdToEdges.values()) });
+    set({
+      idToEdges: newIdToEdges,
+    });
     get().refreshCounts();
   },
 
@@ -81,7 +98,11 @@ export const createReactFlowSlice: StateCreator<
     get().refreshCounts();
   },
   onConnect: (connection) => {
-    get().addEdge(connection);
+    set({ edges: addEdge(connection, get().edges) });
+    const newEdge = get().edges[-1];
+    set({
+      idToEdges: new Map(get().idToEdges).set(newEdge.id, newEdge),
+    });
     get().refreshCounts();
   },
 
@@ -91,6 +112,12 @@ export const createReactFlowSlice: StateCreator<
       nodes: get().nodes.map((node) =>
         node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
       ),
+    });
+    set({
+      idToNodes: new Map(get().idToNodes).set(id, {
+        ...get().getNode(id),
+        data: { ...get().getNode(id).data, ...data },
+      }),
     });
   },
   refreshCounts: () => {
