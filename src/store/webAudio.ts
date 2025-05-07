@@ -5,8 +5,7 @@ type State = {
   ctx: AudioContext;
   isPlaying: boolean;
   nodeIdToSrcNode: Map<string, MediaElementAudioSourceNode>;
-  currTime: number;
-  totalTime: number;
+  duration: number;
 };
 
 type Functions = {
@@ -14,8 +13,7 @@ type Functions = {
   togglePlaying: () => void;
   createAudioNodeSource: (el: HTMLAudioElement) => MediaElementAudioSourceNode;
   playNode: (id: string) => void;
-  setCurrTime: (time: number) => void;
-  setTotalTime: (time: number) => void;
+  setDuration: (time: number) => void;
 };
 
 export type WebAudioSlice = State & Functions;
@@ -34,7 +32,7 @@ export const createWebAudioSlice: StateCreator<
     isPlaying: false,
     nodeIdToSrcNode: new Map<string, MediaElementAudioSourceNode>(),
     currTime: 0,
-    totalTime: 0,
+    duration: 0,
 
     setIsPlaying: (isPlaying) => {
       set({ isPlaying });
@@ -71,8 +69,8 @@ export const createWebAudioSlice: StateCreator<
     setCurrTime: (time) => {
       set({ currTime: time });
     },
-    setTotalTime: (time) => {
-      set({ totalTime: time });
+    setDuration: (time) => {
+      set({ duration: time });
     },
   };
 };

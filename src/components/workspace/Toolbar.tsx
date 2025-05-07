@@ -13,6 +13,7 @@ import {
 import STORE_SELECTORS from "../../store/store";
 import { initNode } from "../AudioClipNode/utils";
 import { ColorModeButton } from "../ui/color-mode";
+import PlaybackTime from "./PlaybackTime";
 import TooltipButton from "./TooltipButton";
 
 function VerticalSeparator() {
@@ -41,28 +42,31 @@ export default function Toolbar() {
         <TooltipButton label="Toggle Sidebar" onClick={toggleSidebar}>
           <BiSidebar />
         </TooltipButton>
-      </HStack>
 
-      <HStack>
-        <TooltipButton label="Play/Pause" onClick={() => togglePlaying()}>
+        <VerticalSeparator />
+
+        <TooltipButton label="Toggle playback" onClick={() => togglePlaying()}>
           {isPlaying ? <BiPause /> : <BiPlay />}
         </TooltipButton>
         {/* <TooltipButton label="Stop" onClick={() => {}}>
           <BiStop />
         </TooltipButton> */}
-        <VerticalSeparator />
-        <TooltipButton label="Rewind" onClick={() => {}}>
+        <TooltipButton label="Go to Start" onClick={() => {}}>
           <BiRewind />
         </TooltipButton>
-        <TooltipButton label="Fast Forward" onClick={() => {}}>
+        <TooltipButton label="Go to End" onClick={() => {}}>
           <BiFastForward />
         </TooltipButton>
         {/* <TooltipButton label="Repeat" onClick={() => {}}>
           <BiRepeat />
         </TooltipButton> */}
+
+        <VerticalSeparator />
+
+        <PlaybackTime />
       </HStack>
 
-      <HStack>
+      <HStack position="absolute" left="50%" transform="translateX(-50%)">
         <TooltipButton
           label="Add Node"
           onClick={() => addNodes([initNode(nodeCount, { x: 50, y: 50 })])}
@@ -84,6 +88,7 @@ export default function Toolbar() {
             <VerticalSeparator />
           </>
         )}
+
         <ColorModeButton />
         <TooltipButton label="Zoom In" onClick={() => {}}>
           <BiZoomIn />
