@@ -1,13 +1,13 @@
 import { Box } from "@chakra-ui/react";
 import { Handle, Position } from "@xyflow/react";
 
-export default function ClipNodeWrapper<T = unknown>(
-  props: { children: React.ReactNode } & T,
-) {
-  const { children, ...rest } = props;
-
+export default function ClipNodeWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <Box {...rest}>
+    <Box borderWidth={2} rounded="md" bg="bg.emphasized" color="fg">
       <Handle
         id="in"
         type="target"
