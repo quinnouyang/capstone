@@ -65,7 +65,7 @@ export const createReactFlowSlice: StateCreator<
   addNodes: (nodes) => {
     const newIdToNodes = new Map(get().idToNodes);
     nodes.forEach((node) => {
-      get().idToNodes.set(node.id, node);
+      newIdToNodes.set(node.id, node);
     });
     set({ nodes: Array.from(newIdToNodes.values()) });
     set({
@@ -76,7 +76,7 @@ export const createReactFlowSlice: StateCreator<
   addEdges: (edges) => {
     const newIdToEdges = new Map(get().idToEdges);
     edges.forEach((edge) => {
-      get().idToEdges.set(edge.id, edge);
+      newIdToEdges.set(edge.id, edge);
     });
     set({ edges: Array.from(newIdToEdges.values()) });
     set({

@@ -12,7 +12,7 @@ import "@xyflow/react/dist/style.css";
 
 import { Button } from "@chakra-ui/react";
 import { useCallback } from "react";
-import useShallowStore, { type State } from "../store/store";
+import STORE_SELECTORS from "../store/store";
 import { initNode } from "./AudioClipNode/utils";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
@@ -20,37 +20,20 @@ import PlayPause from "./PlayPause";
 import { useColorMode } from "./ui/color-mode";
 import { genId } from "./utils";
 
-const SELECTOR = (s: State) => ({
-  nodes: s.nodes,
-  edges: s.edges,
-  nodeCount: s.nodeCount,
-  edgeCount: s.edgeCount,
-  addNodes: s.addNodes,
-  addEdges: s.addEdges,
-  addEdge: s.addEdge,
-  onNodesChange: s.onNodesChange,
-  onEdgesChange: s.onEdgesChange,
-  onConnect: s.onConnect,
-
-  devtoolsOpen: s.devtoolsOpen,
-});
-
 export default function Canvas() {
-  const {
-    nodes,
-    edges,
-    nodeCount,
-    edgeCount,
-    addNodes,
-    addEdges,
-    addEdge,
-    onNodesChange,
-    onEdgesChange,
-    onConnect,
-    devtoolsOpen,
-  } = useShallowStore(SELECTOR);
   const { colorMode } = useColorMode(); // [Bug] Redundant rerender
   const { screenToFlowPosition } = useReactFlow(); // [Bug] Redundant rerender
+
+  const nodes = STORE_SELECTORS.nodes();
+  const edges = STORE_SELECTORS.edges();
+  const nodeCount = STORE_SELECTORS.nodeCount();
+  const edgeCount = STORE_SELECTORS.edgeCount();
+  const addNodes = STORE_SELECTORS.addNodes();
+  const addEdges = STORE_SELECTORS.addEdges();
+  const onNodesChange = STORE_SELECTORS.onNodesChange();
+  const onEdgesChange = STORE_SELECTORS.onEdgesChange();
+  const onConnect = STORE_SELECTORS.onConnect();
+  const devtoolsOpen = STORE_SELECTORS.devtoolsOpen();
 
   const onConnectEnd = useCallback<OnConnectEnd>(
     (event, connectionState) => {
@@ -70,14 +53,16 @@ export default function Canvas() {
 
       const source = connectionState.fromNode.id;
 
-      addNodes(node);
-      addEdge({
-        id: genId(edgeCount, "edge"),
-        source,
-        target: node.id,
-        sourceHandle: "out",
-        targetHandle: "in",
-      });
+      addNodes([node]);
+      addEdges([
+        {
+          id: genId(edgeCount, "edge"),
+          source,
+          target: node.id,
+          sourceHandle: "out",
+          targetHandle: "in",
+        },
+      ]);
     },
     [nodeCount, edgeCount, addNodes, addEdges, screenToFlowPosition],
   );
@@ -102,7 +87,9 @@ export default function Canvas() {
     >
       <Panel position="bottom-center">
         <PlayPause />
-        <Button onClick={() => addNodes(initNode(nodeCount, { x: 50, y: 50 }))}>
+        <Button
+          onClick={() => addNodes([initNode(nodeCount, { x: 50, y: 50 })])}
+        >
           Add Node
         </Button>
       </Panel>

@@ -1,5 +1,4 @@
 import { type StoreApi, type UseBoundStore, create } from "zustand";
-import { useShallow } from "zustand/shallow";
 import { type ReactFlowSlice, createReactFlowSlice } from "./reactFlow";
 import { type WebAudioSlice, createWebAudioSlice } from "./webAudio";
 import { type WorkspaceSlice, createWorkspaceSlice } from "./workspace";
@@ -26,9 +25,9 @@ const useCustomStore = create<Slices>()(
   // ),
 );
 
-export default function useShallowStore<T>(selector: (state: Slices) => T): T {
-  return useCustomStore(useShallow(selector));
-}
+// export default function useShallowStore<T>(selector: (state: Slices) => T): T {
+//   return useCustomStore(useShallow(selector));
+// }
 
 // https://zustand.docs.pmnd.rs/guides/auto-generating-selectors
 type WithSelectors<S> = S extends { getState: () => infer T }
@@ -47,4 +46,6 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
   return store;
 };
 
-export const storeGetters = createSelectors(useCustomStore).use;
+const STORE_SELECTORS = createSelectors(useCustomStore).use;
+
+export default STORE_SELECTORS;

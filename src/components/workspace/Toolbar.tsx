@@ -9,15 +9,13 @@ import {
   BiZoomIn,
   BiZoomOut,
 } from "react-icons/bi";
-import useShallowStore from "../../store/store";
+import STORE_SELECTORS from "../../store/store";
 import { ColorModeButton } from "../ui/color-mode";
 import TooltipButton from "./TooltipButton";
 
 export default function Toolbar() {
-  const { toggleSidebar, toggleDevtools } = useShallowStore((s) => ({
-    toggleSidebar: s.toggleSidebar,
-    toggleDevtools: s.toggleDevtools,
-  }));
+  const toggleSidebar = STORE_SELECTORS.toggleSidebar();
+  const toggleDevtools = STORE_SELECTORS.toggleDevtools();
 
   return (
     <Flex bg="bg.panel" align="center" shadow="md">

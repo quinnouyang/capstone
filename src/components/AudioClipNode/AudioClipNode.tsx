@@ -1,7 +1,7 @@
 import { NodeProps, NodeResizer, NodeToolbar } from "@xyflow/react";
 import { ChangeEvent, useEffect, useRef } from "react";
 
-import useShallowStore, { type State } from "../../store/store";
+import STORE_SELECTORS from "../../store/store";
 import { FileInput, FileUploadRoot } from "../ui/file-upload";
 import ClipNodeWrapper from "./ClipNodeWrapper";
 import type { AudioClipNodeType } from "./types";
@@ -12,13 +12,11 @@ export default function AudioClipNode({
   selected,
 }: NodeProps<AudioClipNodeType>) {
   const ref = useRef<HTMLAudioElement>(null);
-  const { updateNodeData, getOutputNodes, createAudioNodeSource, play } =
-    useShallowStore((s: State) => ({
-      updateNodeData: s.updateNodeData,
-      getOutputNodes: s.getOutputNodes,
-      createAudioNodeSource: s.createAudioNodeSource,
-      play: s.play,
-    }));
+
+  const updateNodeData = STORE_SELECTORS.updateNodeData();
+  const getOutputNodes = STORE_SELECTORS.getOutputNodes();
+  const createAudioNodeSource = STORE_SELECTORS.createAudioNodeSource();
+  const play = STORE_SELECTORS.play();
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
     if (!ref.current) return console.warn("AudioTrackNode: ref is null");
