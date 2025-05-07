@@ -9,7 +9,7 @@ import {
 } from "@xyflow/react";
 import { StateCreator } from "zustand";
 import type { AudioClipNodeType } from "../components/AudioClipNode/utils";
-import { INIT_EDGES, INIT_NODES } from "../components/consts";
+import { INIT_EDGES, INIT_NODES, initEdge } from "../components/consts";
 import type { WebAudioSlice } from "./webAudio";
 
 type State = {
@@ -98,10 +98,14 @@ export const createReactFlowSlice: StateCreator<
     get().refreshCounts();
   },
   onConnect: (connection) => {
-    set({ edges: addEdge(connection, get().edges) });
-    const newEdge = get().edges[-1];
     set({
-      idToEdges: new Map(get().idToEdges).set(newEdge.id, newEdge),
+      edges: addEdge(
+        initEdge(connection.source, connection.target),
+        get().edges,
+      ),
+    });
+    set({
+      idToEdges: new Map(get().edges.map((edge) => [edge.id, edge])),
     });
     get().refreshCounts();
   },

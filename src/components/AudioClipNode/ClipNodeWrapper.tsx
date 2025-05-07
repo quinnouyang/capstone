@@ -11,12 +11,14 @@ export default function ClipNodeWrapper({
       <Handle
         id="in"
         type="target"
+        style={{ width: 12, height: 12 }}
         position={Position.Left}
         isConnectableStart={false}
       />
       <Handle
         id="out"
         type="source"
+        style={{ width: 12, height: 12 }}
         position={Position.Right}
         isConnectableEnd={false}
       />
