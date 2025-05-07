@@ -47,4 +47,4 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
   return store;
 };
 
-export const useSelectedStore = createSelectors(useCustomStore).use;
+export const storeGetters = createSelectors(useCustomStore).use;
