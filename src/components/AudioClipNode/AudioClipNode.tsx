@@ -1,7 +1,7 @@
 import { NodeProps, NodeToolbar } from "@xyflow/react";
 import { ChangeEvent, useEffect, useRef } from "react";
 
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, chakra, Flex, Heading } from "@chakra-ui/react";
 import STORE_SELECTORS from "../../store/store";
 import { FileInput, FileUploadRoot } from "../ui/file-upload";
 import ClipNodeWrapper from "./ClipNodeWrapper";
@@ -70,16 +70,13 @@ export default function AudioClipNode({
 
   return (
     <ClipNodeWrapper>
-      <Box rounded="md" p={2} bg="bg" color="fg">
+      <Flex className="drag-handle" p={2} cursor="move">
         <Heading>{src}</Heading>
+      </Flex>
+      {/* <NodeResizer isVisible={selected} /> */}
+      <Box bg="bg">
         <Waveform />
-        <NodeToolbar>
-          <FileUploadRoot accept="audio/*" onChange={onChange}>
-            <FileInput />
-          </FileUploadRoot>
-        </NodeToolbar>
-        {/* <NodeResizer isVisible={selected} /> */}
-        <audio
+        <chakra.audio
           ref={ref}
           id={id}
           controls
@@ -88,6 +85,11 @@ export default function AudioClipNode({
           onPause={() => setIsPlaying(false)}
         />
       </Box>
+      <NodeToolbar>
+        <FileUploadRoot accept="audio/*" onChange={onChange}>
+          <FileInput />
+        </FileUploadRoot>
+      </NodeToolbar>
     </ClipNodeWrapper>
   );
 }

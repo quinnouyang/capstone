@@ -12,6 +12,7 @@ export function initNode(
     position,
     data: { src },
     type: "audioTrackNode",
+    dragHandle: ".drag-handle",
     origin: [0, 0.5],
   };
 }

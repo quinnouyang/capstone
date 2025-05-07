@@ -1,4 +1,12 @@
-import { Box } from "@chakra-ui/react";
+import {
+  Box,
+  EmptyStateContent,
+  EmptyStateDescription,
+  EmptyStateIndicator,
+  EmptyStateRoot,
+  EmptyStateTitle,
+  VStack,
+} from "@chakra-ui/react";
 import { useNodeId } from "@xyflow/react";
 import {
   default as Peaks,
@@ -6,6 +14,7 @@ import {
   type PeaksOptions,
 } from "peaks.js";
 import { useEffect, useRef, useState } from "react";
+import { BiFileBlank } from "react-icons/bi";
 import STORE_SELECTORS from "../../store/store";
 
 type EventEmitter = Parameters<NonNullable<PeaksOptions["player"]>["init"]>[0];
@@ -32,9 +41,16 @@ export default function Waveform() {
     const options: PeaksOptions = {
       zoomview: {
         container: zoomRef.current,
+        waveformColor: "#58C4DD",
+        showPlayheadTime: true,
+        // enablePoints: false,
+        // enableSegments: false,
       },
       overview: {
         container: overviewRef.current,
+        highlightColor: "#FFFF00",
+        // enablePoints: false,
+        // enableSegments: false,
       },
       mediaElement: el,
       webAudio: {
@@ -91,10 +107,24 @@ export default function Waveform() {
     })();
   }, [id, ctx, zoomRef, overviewRef, el]);
 
-  return (
+  return el?.src ? (
     <>
       <Box ref={zoomRef} width="100%" height="320px"></Box>
       <Box ref={overviewRef} width="100%" height="80px"></Box>
+    </>
+  ) : (
+    <>
+      <EmptyStateRoot>
+        <EmptyStateContent>
+          <EmptyStateIndicator>
+            <BiFileBlank />
+          </EmptyStateIndicator>
+          <VStack textAlign="center">
+            <EmptyStateTitle>Empty audio clip</EmptyStateTitle>
+            <EmptyStateDescription>Upload an audio file</EmptyStateDescription>
+          </VStack>
+        </EmptyStateContent>
+      </EmptyStateRoot>
     </>
   );
 }
