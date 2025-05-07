@@ -1,8 +1,8 @@
 import { addEdge, type Edge } from "@xyflow/react";
 
 import src0 from "../../assets/1.wav";
-import src1 from "../../assets/2.wav";
 import src2 from "../../assets/3.wav";
+import src1 from "../../assets/5.wav";
 import AudioClipNode from "./AudioClipNode/AudioClipNode";
 import type { AudioClipNodeType } from "./AudioClipNode/types";
 import { initNode } from "./AudioClipNode/utils";
