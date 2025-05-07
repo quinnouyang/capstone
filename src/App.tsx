@@ -1,15 +1,21 @@
-import { Box } from "@chakra-ui/react";
+import { Flex, Stack } from "@chakra-ui/react";
 import { ReactFlowProvider } from "@xyflow/react";
 import Canvas from "./components/Canvas";
 import { Provider } from "./components/ui/provider";
+import Sidebar from "./components/workspace/Sidebar";
+import Toolbar from "./components/workspace/Toolbar/Toolbar";
 
 export default function App() {
   return (
-    <Provider forcedTheme="light">
+    <Provider>
       <ReactFlowProvider>
-        <Box width="100vw" height="100vh">
-          <Canvas />
-        </Box>
+        <Flex w="100vw" h="100vh" direction="column">
+          <Toolbar />
+          <Stack h="full">
+            <Sidebar />
+            <Canvas />
+          </Stack>
+        </Flex>
       </ReactFlowProvider>
     </Provider>
   );

@@ -1,16 +1,13 @@
-import useShallowStore from "../../store";
+import STORE_SELECTORS from "../../store/store";
 
 export default function StoreInspector() {
-  const {
-    nodes,
-    edges,
-    nodeCount,
-    edgeCount,
-    ctx,
-    isPlaying,
-    nodeIdToEl,
-    getOutputNodes,
-  } = useShallowStore((s) => s);
+  const nodes = STORE_SELECTORS.nodes();
+  const edges = STORE_SELECTORS.edges();
+  const isPlaying = STORE_SELECTORS.isPlaying();
+  const nodeCount = STORE_SELECTORS.nodeCount();
+  const edgeCount = STORE_SELECTORS.edgeCount();
+  const getOutputNodes = STORE_SELECTORS.getOutputNodes();
+  const nodeAudiodata = STORE_SELECTORS.nodeAudioData();
 
   return (
     <div className="react-flow__devtools-changelogger">
@@ -45,18 +42,15 @@ export default function StoreInspector() {
           );
         })}
         <br />
-        <div>Audio Context State: {ctx.state}</div>
         <div>isPlaying: {isPlaying ? "true" : "false"}</div>
-        <div>Audio Elements:</div>
-        {Array.from(nodeIdToEl.entries()).map(([id, el]) => {
+        <div>nodeAudioData:</div>
+        {Array.from(nodeAudiodata.entries()).map(([id, { file, el }]) => {
           return (
             <div key={id} className="react-flow__devtools-nodeinfo">
-              {id}:{" "}
-              {JSON.stringify(
-                el,
-                ["src", "currentTime", "duration", "ended", "playing"],
-                2,
-              )}
+              <div>id: {id}</div>
+              <div>file: {file?.name}</div>
+              <div>currTime: {el?.currentTime}</div>
+              <br />
             </div>
           );
         })}

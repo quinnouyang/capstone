@@ -6,6 +6,7 @@ import type { ThemeProviderProps } from "next-themes";
 import { ThemeProvider, useTheme } from "next-themes";
 import * as React from "react";
 import { LuMoon, LuSun } from "react-icons/lu";
+import { Tooltip } from "./tooltip";
 
 export interface ColorModeProviderProps extends ThemeProviderProps {}
 
@@ -54,22 +55,17 @@ export const ColorModeButton = React.forwardRef<
   const { toggleColorMode } = useColorMode();
   return (
     <ClientOnly fallback={<Skeleton boxSize="8" />}>
-      <IconButton
-        onClick={toggleColorMode}
-        // variant="ghost"
-        aria-label="Toggle color mode"
-        // size="sm"
-        ref={ref}
-        {...props}
-        // css={{
-        //   _icon: {
-        //     width: "5",
-        //     height: "5",
-        //   },
-        // }}
-      >
-        <ColorModeIcon />
-      </IconButton>
+      <Tooltip content="Toggle Color Mode">
+        <IconButton
+          onClick={toggleColorMode}
+          variant="outline"
+          aria-label="Toggle color mode"
+          ref={ref}
+          {...props}
+        >
+          <ColorModeIcon />
+        </IconButton>
+      </Tooltip>
     </ClientOnly>
   );
 });
