@@ -5,8 +5,8 @@ import { Box, chakra, Flex, Heading } from "@chakra-ui/react";
 import STORE_SELECTORS from "../../store/store";
 import { FileInput, FileUploadRoot } from "../ui/file-upload";
 import ClipNodeWrapper from "./ClipNodeWrapper";
-import type { AudioClipNodeType } from "./types";
 import Waveform from "./Waveform";
+import type { AudioClipNodeType } from "./utils";
 
 export default function AudioClipNode({
   id,
@@ -74,7 +74,7 @@ export default function AudioClipNode({
         <Heading>{src}</Heading>
       </Flex>
       {/* <NodeResizer isVisible={selected} /> */}
-      <Box bg="bg">
+    <Box bg="bg">
         <Waveform />
         <chakra.audio
           ref={ref}
