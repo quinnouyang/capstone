@@ -3,7 +3,7 @@ import STORE_SELECTORS from "../../store/store";
 export default function StoreInspector() {
   const nodes = STORE_SELECTORS.nodes();
   const edges = STORE_SELECTORS.edges();
-  const isPlaying = STORE_SELECTORS.isPlaying();
+  const isPlaying = STORE_SELECTORS.isPlay();
   const nodeCount = STORE_SELECTORS.nodeCount();
   const edgeCount = STORE_SELECTORS.edgeCount();
   const getOutputNodes = STORE_SELECTORS.getOutputNodes();

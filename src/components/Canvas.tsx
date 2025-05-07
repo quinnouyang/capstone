@@ -3,20 +3,17 @@ import {
   Controls,
   MiniMap,
   OnConnectEnd,
-  Panel,
   ReactFlow,
   SelectionMode,
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import { Button } from "@chakra-ui/react";
 import { useCallback } from "react";
 import STORE_SELECTORS from "../store/store";
 import { initNode } from "./AudioClipNode/utils";
 import { NODE_TYPES } from "./consts";
 import DevTools from "./debug/Devtools";
-import PlayPause from "./PlayPause";
 import { useColorMode } from "./ui/color-mode";
 import { genId } from "./utils";
 
@@ -85,14 +82,6 @@ export default function Canvas() {
       zoomOnDoubleClick={false}
       proOptions={{ hideAttribution: true }}
     >
-      <Panel position="bottom-center">
-        <PlayPause />
-        <Button
-          onClick={() => addNodes([initNode(nodeCount, { x: 50, y: 50 })])}
-        >
-          Add Node
-        </Button>
-      </Panel>
       <MiniMap />
       <Controls />
       <Background />

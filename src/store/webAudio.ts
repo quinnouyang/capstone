@@ -10,9 +10,10 @@ type State = {
 };
 
 type Functions = {
-  togglePlay: () => void;
+  setIsPlaying: (isPlaying: boolean) => void;
+  togglePlaying: () => void;
   createAudioNodeSource: (el: HTMLAudioElement) => MediaElementAudioSourceNode;
-  play: (id: string) => void;
+  playNode: (id: string) => void;
   setCurrTime: (time: number) => void;
   setTotalTime: (time: number) => void;
 };
@@ -35,12 +36,16 @@ export const createWebAudioSlice: StateCreator<
     currTime: 0,
     totalTime: 0,
 
-    togglePlay: () => {
-      set({ isPlaying: !get().isPlaying });
-      const ctx = get().ctx;
-      ctx.state === "suspended" ? ctx.resume() : ctx.suspend();
+    setIsPlaying: (isPlaying) => {
+      set({ isPlaying });
+      if (isPlaying) ctx.resume();
+      else ctx.suspend();
+    },
+    togglePlaying: () => {
+      get().setIsPlaying(!get().isPlaying);
+      if (!get().isPlaying) return;
       const firstId = get().nodes.at(0)?.id;
-      if (firstId) get().play(firstId);
+      if (firstId) get().playNode(firstId);
     },
     createAudioNodeSource: (el) => {
       if (get().nodeIdToSrcNode.has(el.id)) {
@@ -58,7 +63,7 @@ export const createWebAudioSlice: StateCreator<
 
       return srcNode;
     },
-    play: (id) => {
+    playNode: (id) => {
       const srcNode = get().getNode(id).data.srcNode?.mediaElement;
       if (!srcNode) return console.warn("Could not find audio source", id);
       srcNode.play();

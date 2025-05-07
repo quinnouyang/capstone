@@ -16,7 +16,9 @@ export default function AudioClipNode({
   const updateNodeData = STORE_SELECTORS.updateNodeData();
   const getOutputNodes = STORE_SELECTORS.getOutputNodes();
   const createAudioNodeSource = STORE_SELECTORS.createAudioNodeSource();
-  const play = STORE_SELECTORS.play();
+  const play = STORE_SELECTORS.playNode();
+  const setIsPlaying = STORE_SELECTORS.setIsPlaying();
+  const isPlaying = STORE_SELECTORS.isPlaying();
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
     if (!ref.current) return console.warn("AudioTrackNode: ref is null");
@@ -29,6 +31,7 @@ export default function AudioClipNode({
     });
   }
 
+  // Init connect to ctx
   useEffect(() => {
     const el = ref.current;
     if (!el) return console.warn("AudioTrackNode: ref is null");
@@ -58,6 +61,13 @@ export default function AudioClipNode({
     };
   }, [ref, getOutputNodes]);
 
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return console.warn("AudioTrackNode: ref is null");
+
+    !isPlaying && el.pause();
+  }, [ref, isPlaying]);
+
   return (
     <ClipNodeWrapper>
       <NodeToolbar>
@@ -66,7 +76,14 @@ export default function AudioClipNode({
         </FileUploadRoot>
       </NodeToolbar>
       <NodeResizer isVisible={selected} />
-      <audio ref={ref} id={id} controls src={data.src}></audio>
+      <audio
+        ref={ref}
+        id={id}
+        controls
+        src={data.src}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      />
     </ClipNodeWrapper>
   );
 }
