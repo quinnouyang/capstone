@@ -48,8 +48,8 @@ export default function StoreInspector() {
           return (
             <div key={id} className="react-flow__devtools-nodeinfo">
               <div>id: {id}</div>
-              <div>file: {file.name}</div>
-              <div>currTime: {el.currentTime}</div>
+              <div>file: {file?.name}</div>
+              <div>currTime: {el?.currentTime}</div>
               <br />
             </div>
           );

@@ -1,4 +1,4 @@
-import { Stack } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Handle, Position } from "@xyflow/react";
 
 export default function ClipNodeWrapper<T = unknown>(
@@ -7,16 +7,7 @@ export default function ClipNodeWrapper<T = unknown>(
   const { children, ...rest } = props;
 
   return (
-    <Stack
-      color="black"
-      bgColor="white"
-      rounded={16}
-      borderWidth={2}
-      borderColor={"black"}
-      p={4}
-      gap={4}
-      {...rest}
-    >
+    <Box {...rest}>
       <Handle
         id="in"
         type="target"
@@ -30,6 +21,6 @@ export default function ClipNodeWrapper<T = unknown>(
         isConnectableEnd={false}
       />
       {children}
-    </Stack>
+    </Box>
   );
 }
