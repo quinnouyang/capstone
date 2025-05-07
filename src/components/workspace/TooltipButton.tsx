@@ -17,7 +17,7 @@ export default function TooltipButton({
   variant?: IconButtonProps["variant"];
 }) {
   return (
-    <Tooltip content={label}>
+    <Tooltip content={label} openDelay={100}>
       <IconButton
         aria-label={label}
         onClick={onClick}
