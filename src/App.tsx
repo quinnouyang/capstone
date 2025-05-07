@@ -7,7 +7,7 @@ import Toolbar from "./components/workspace/Toolbar";
 
 export default function App() {
   return (
-    <Provider forcedTheme="light">
+    <Provider>
       <ReactFlowProvider>
         <Flex w="100vw" h="100vh" direction="column">
           <Toolbar />
