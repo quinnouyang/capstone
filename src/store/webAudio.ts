@@ -1,18 +1,25 @@
 import { StateCreator } from "zustand";
 import type { ReactFlowSlice } from "./reactFlow";
 
+type AudioClipData = {
+  file: File;
+  el: HTMLAudioElement;
+  srcNode: MediaElementAudioSourceNode;
+};
+
 type State = {
   ctx: AudioContext;
   isPlaying: boolean;
-  nodeIdToSrcNode: Map<string, MediaElementAudioSourceNode>;
+  nodeAudioData: Map<string, AudioClipData>;
   duration: number;
 };
 
 type Functions = {
   setIsPlaying: (isPlaying: boolean) => void;
   togglePlaying: () => void;
-  createAudioNodeSource: (el: HTMLAudioElement) => MediaElementAudioSourceNode;
-  playNode: (id: string) => void;
+  initAudioData: (id: string, el: HTMLAudioElement) => void;
+  updateAudioData: (id: string, data: Partial<AudioClipData>) => void;
+  playNodeEl: (id: string) => void;
   setDuration: (time: number) => void;
 };
 
@@ -30,7 +37,7 @@ export const createWebAudioSlice: StateCreator<
   return {
     ctx,
     isPlaying: false,
-    nodeIdToSrcNode: new Map<string, MediaElementAudioSourceNode>(),
+    nodeAudioData: new Map<string, AudioClipData>(),
     currTime: 0,
     duration: 0,
 
@@ -43,28 +50,41 @@ export const createWebAudioSlice: StateCreator<
       get().setIsPlaying(!get().isPlaying);
       if (!get().isPlaying) return;
       const firstId = get().nodes.at(0)?.id;
-      if (firstId) get().playNode(firstId);
+      if (firstId) get().playNodeEl(firstId);
     },
-    createAudioNodeSource: (el) => {
-      if (get().nodeIdToSrcNode.has(el.id)) {
-        console.warn("Audio source already exists", el.id);
-        return get().nodeIdToSrcNode.get(el.id)!;
+
+    initAudioData: (id: string, el: HTMLAudioElement) => {
+      if (get().nodeAudioData.has(id)) {
+        console.warn("Audio data already exists", id);
+        return get().nodeAudioData.get(id)!;
       }
 
       const srcNode = get().ctx.createMediaElementSource(el);
       srcNode.connect(get().ctx.destination);
 
-      // https://zustand.docs.pmnd.rs/guides/maps-and-sets-usage (Necessary?)
-      set(({ nodeIdToSrcNode: nodeIdToEl }) => ({
-        nodeIdToSrcNode: new Map(nodeIdToEl).set(el.id, srcNode),
+      set(({ nodeAudioData }) => ({
+        nodeAudioData: new Map(nodeAudioData).set(id, {
+          file: new File([], el.src),
+          el,
+          srcNode,
+        }),
       }));
 
       return srcNode;
     },
-    playNode: (id) => {
-      const srcNode = get().getNode(id).data.srcNode?.mediaElement;
-      if (!srcNode) return console.warn("Could not find audio source", id);
-      srcNode.play();
+    updateAudioData: (id: string, data: Partial<AudioClipData>) => {
+      set(({ nodeAudioData }) => ({
+        nodeAudioData: new Map(nodeAudioData).set(id, {
+          ...nodeAudioData.get(id)!,
+          ...data,
+        }),
+      }));
+    },
+
+    playNodeEl: (id) => {
+      const el = get().nodeAudioData.get(id)?.el;
+      if (!el) return console.warn("Could not find audio source", id);
+      el.play();
     },
     setDuration: (time) => {
       set({ duration: time });

@@ -13,10 +13,10 @@ export default function AudioClipNode({
 }: NodeProps<AudioClipNodeType>) {
   const ref = useRef<HTMLAudioElement>(null);
 
-  const updateNodeData = STORE_SELECTORS.updateNodeData();
+  const updateAudioData = STORE_SELECTORS.updateAudioData();
   const getOutputNodes = STORE_SELECTORS.getOutputNodes();
-  const createAudioNodeSource = STORE_SELECTORS.createAudioNodeSource();
-  const play = STORE_SELECTORS.playNode();
+  const initAudioData = STORE_SELECTORS.initAudioData();
+  const play = STORE_SELECTORS.playNodeEl();
   const setIsPlaying = STORE_SELECTORS.setIsPlaying();
   const isPlaying = STORE_SELECTORS.isPlaying();
 
@@ -24,9 +24,7 @@ export default function AudioClipNode({
     if (!ref.current) return console.warn("AudioTrackNode: ref is null");
     if (!files || !files[0]) return console.warn("No file selected");
 
-    updateNodeData(id, {
-      ...data,
-      src: URL.createObjectURL(files[0]),
+    updateAudioData(id, {
       file: files[0],
     });
   }
@@ -36,10 +34,7 @@ export default function AudioClipNode({
     const el = ref.current;
     if (!el) return console.warn("AudioTrackNode: ref is null");
 
-    updateNodeData(id, {
-      ...data,
-      srcNode: createAudioNodeSource(el),
-    });
+    initAudioData(id, el);
   }, [ref]);
 
   useEffect(() => {

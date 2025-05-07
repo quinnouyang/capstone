@@ -32,7 +32,7 @@ type Functions = {
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
 
-  updateNodeData: (id: string, data: AudioClipNodeType["data"]) => void;
+  updateNodeInfo: (id: string, data: AudioClipNodeType["data"]) => void;
   refreshCounts: () => void;
   getOutputNodes: (id: string) => AudioClipNodeType[];
 };
@@ -107,7 +107,7 @@ export const createReactFlowSlice: StateCreator<
   },
 
   // https://reactflow.dev/examples/nodes/update-node, https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#using_object_urls
-  updateNodeData(id, data) {
+  updateNodeInfo(id, data) {
     set({
       nodes: get().nodes.map((node) =>
         node.id === id ? { ...node, data: { ...node.data, ...data } } : node,
