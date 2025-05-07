@@ -2,11 +2,15 @@ import { create } from "zustand";
 import { useShallow } from "zustand/shallow";
 import { type ReactFlowSlice, createReactFlowSlice } from "./reactFlow";
 import { type WebAudioSlice, createWebAudioSlice } from "./webAudio";
+import { type WorkspaceSlice, createWorkspaceSlice } from "./workspace";
 
-const useCustomStore = create<ReactFlowSlice & WebAudioSlice>()(
+type Slices = ReactFlowSlice & WebAudioSlice & WorkspaceSlice;
+
+const useCustomStore = create<Slices>()(
   (...a) => ({
     ...createReactFlowSlice(...a),
     ...createWebAudioSlice(...a),
+    ...createWorkspaceSlice(...a),
   }),
   // // [FIX] Does not paste correctly with
   //   {
@@ -22,8 +26,6 @@ const useCustomStore = create<ReactFlowSlice & WebAudioSlice>()(
   // ),
 );
 
-export default function useShallowStore<T>(
-  selector: (state: ReactFlowSlice & WebAudioSlice) => T,
-): T {
+export default function useShallowStore<T>(selector: (state: Slices) => T): T {
   return useCustomStore(useShallow(selector));
 }

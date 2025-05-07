@@ -31,6 +31,8 @@ const SELECTOR = (s: State) => ({
   onNodesChange: s.onNodesChange,
   onEdgesChange: s.onEdgesChange,
   onConnect: s.onConnect,
+
+  devtoolsOpen: s.devtoolsOpen,
 });
 
 export default function Canvas() {
@@ -45,6 +47,7 @@ export default function Canvas() {
     onNodesChange,
     onEdgesChange,
     onConnect,
+    devtoolsOpen,
   } = useShallowStore(SELECTOR);
   const { colorMode } = useColorMode(); // [Bug] Redundant rerender
   const { screenToFlowPosition } = useReactFlow(); // [Bug] Redundant rerender
@@ -109,7 +112,7 @@ export default function Canvas() {
       <MiniMap />
       <Controls />
       <Background />
-      <DevTools />
+      {devtoolsOpen && <DevTools />}
     </ReactFlow>
   );
 }

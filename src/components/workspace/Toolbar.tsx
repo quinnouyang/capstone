@@ -1,5 +1,6 @@
 import { Box, Flex, IconButton, VStack } from "@chakra-ui/react";
 import {
+  BiCodeAlt,
   BiExport,
   BiFastForward,
   BiPlay,
@@ -13,22 +14,22 @@ import {
   BiZoomIn,
   BiZoomOut,
 } from "react-icons/bi";
+import useShallowStore from "../../store/store";
 import { Tooltip } from "../ui/tooltip";
 
-export default function Toolbar({
-  open,
-  setOpen,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}) {
+export default function Toolbar() {
+  const { toggleSidebar, toggleDevtools } = useShallowStore((s) => ({
+    toggleSidebar: s.toggleSidebar,
+    toggleDevtools: s.toggleDevtools,
+  }));
+
   return (
     <Flex bg="gray.800" color="white" align="center" shadow="md">
       <VStack align="stretch" gap={2} p={2}>
         <IconButton
           aria-label="Dock sidebar"
           size="sm"
-          onClick={() => setOpen(!open)}
+          onClick={() => toggleSidebar()}
         >
           <BiSidebar />
         </IconButton>
@@ -85,6 +86,13 @@ export default function Toolbar({
 
       {/* View + File Controls */}
       <Flex gap={2}>
+        {import.meta.env.DEV && (
+          <Tooltip content="Developer Tools">
+            <IconButton aria-label="Dev Tools" onClick={() => toggleDevtools()}>
+              <BiCodeAlt />
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip content="Zoom Out">
           <IconButton aria-label="Zoom Out">
             <BiZoomOut />
