@@ -1,7 +1,9 @@
 import { Flex, HStack, Separator } from "@chakra-ui/react";
+import { useReactFlow } from "@xyflow/react";
 import {
   BiCodeAlt,
   BiFastForward,
+  BiFullscreen,
   BiRewind,
   BiSidebar,
   BiZoomIn,
@@ -19,6 +21,7 @@ function VerticalSeparator() {
 }
 
 export default function Toolbar() {
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
   const toggleSidebar = STORE_SELECTORS.toggleSidebar();
   const toggleDevtools = STORE_SELECTORS.toggleDevtools();
 
@@ -77,12 +80,18 @@ export default function Toolbar() {
         )}
 
         <ColorModeButton />
-        <TooltipButton label="Zoom In" onClick={() => {}}>
+        <TooltipButton label="Zoom In" onClick={() => zoomIn()}>
           <BiZoomIn />
         </TooltipButton>
-        <TooltipButton label="Zoom Out" onClick={() => {}}>
+        <TooltipButton label="Zoom Out" onClick={() => zoomOut()}>
           <BiZoomOut />
         </TooltipButton>
+        <TooltipButton label="Reset view" onClick={() => fitView()}>
+          <BiFullscreen />
+        </TooltipButton>
+        {/* <TooltipButton label="Toggle editing" onClick={() => {}}>
+          <BiLock />
+        </TooltipButton> */}
         {/* <TooltipButton label="Export" onClick={() => {}}>
           <BiExport />
         </TooltipButton> */}

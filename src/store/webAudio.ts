@@ -66,9 +66,6 @@ export const createWebAudioSlice: StateCreator<
       if (!srcNode) return console.warn("Could not find audio source", id);
       srcNode.play();
     },
-    setCurrTime: (time) => {
-      set({ currTime: time });
-    },
     setDuration: (time) => {
       set({ duration: time });
     },

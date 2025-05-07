@@ -1,6 +1,5 @@
 import {
   Background,
-  Controls,
   MiniMap,
   OnConnectEnd,
   ReactFlow,
@@ -83,7 +82,6 @@ export default function Canvas() {
       proOptions={{ hideAttribution: true }}
     >
       <MiniMap />
-      <Controls />
       <Background />
       {devtoolsOpen && <DevTools />}
     </ReactFlow>
