@@ -3,7 +3,7 @@ import { ReactFlowProvider } from "@xyflow/react";
 import Canvas from "./components/Canvas";
 import { Provider } from "./components/ui/provider";
 import Sidebar from "./components/workspace/Sidebar";
-import Toolbar from "./components/workspace/Toolbar";
+import Toolbar from "./components/workspace/Toolbar/Toolbar";
 
 export default function App() {
   return (

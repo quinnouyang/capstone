@@ -9,12 +9,12 @@ import {
   BiZoomIn,
   BiZoomOut,
 } from "react-icons/bi";
-import STORE_SELECTORS from "../../store/store";
-import { ColorModeButton } from "../ui/color-mode";
-import AddNodeButton from "./AddNodeButton";
+import STORE_SELECTORS from "../../../store/store";
+import { ColorModeButton } from "../../ui/color-mode";
+import TooltipButton from "../TooltipButton";
+import AddAudioClipButton from "./AddAudioClipButton";
 import PlaybackTime from "./PlaybackTime";
 import PlayPauseButton from "./PlayPauseButton";
-import TooltipButton from "./TooltipButton";
 
 function VerticalSeparator() {
   return <Separator orientation="vertical" h={8} m={2} />;
@@ -62,7 +62,7 @@ export default function Toolbar() {
       </HStack>
 
       <HStack position="absolute" left="50%" transform="translateX(-50%)">
-        <AddNodeButton />
+        <AddAudioClipButton />
       </HStack>
       {/* <TooltipButton label="Delete Node" onClick={() => {}}>
           <BiTrash />

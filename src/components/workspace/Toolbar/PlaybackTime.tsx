@@ -1,6 +1,7 @@
 import { Heading } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-import STORE_SELECTORS from "../../store/store";
+import STORE_SELECTORS from "../../../store/store";
+import { Tooltip } from "../../ui/tooltip";
 
 const TIME_BUFF = ["", "", "", "", "", "", "", "", "", ""]; // HH:MM:SS.mm (max. 99:59:59.99)
 
@@ -49,8 +50,10 @@ export default function PlaybackTime() {
   const totalTime = STORE_SELECTORS.duration();
 
   return (
-    <Heading minW="24ch">
-      {fmtTimestamp(currTime)} / {fmtTimestamp(totalTime)}
-    </Heading>
+    <Tooltip content="Playback time (MM:SS.mm)" openDelay={100}>
+      <Heading minW="24ch">
+        {fmtTimestamp(currTime)} / {fmtTimestamp(totalTime)}
+      </Heading>
+    </Tooltip>
   );
 }
