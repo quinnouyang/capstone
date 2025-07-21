@@ -7,7 +7,7 @@ export default function StoreInspector() {
   const nodeCount = STORE_SELECTORS.nodeCount();
   const edgeCount = STORE_SELECTORS.edgeCount();
   const getOutputNodes = STORE_SELECTORS.getOutputNodes();
-  const nodeAudiodata = STORE_SELECTORS.nodeAudioData();
+  // const nodeAudiodata = STORE_SELECTORS._nodeAudioData();
 
   return (
     <div className="react-flow__devtools-changelogger">
@@ -44,7 +44,7 @@ export default function StoreInspector() {
         <br />
         <div>isPlaying: {isPlaying ? "true" : "false"}</div>
         <div>nodeAudioData:</div>
-        {Array.from(nodeAudiodata.entries()).map(([id, { file, el }]) => {
+        {/* {Array.from(nodeAudiodata.entries()).map(([id, { file, el }]) => {
           return (
             <div key={id} className="react-flow__devtools-nodeinfo">
               <div>id: {id}</div>
@@ -53,7 +53,7 @@ export default function StoreInspector() {
               <br />
             </div>
           );
-        })}
+        })} */}
       </div>
     </div>
   );

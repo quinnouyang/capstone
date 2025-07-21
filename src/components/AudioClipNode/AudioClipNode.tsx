@@ -1,12 +1,19 @@
 import { NodeProps, NodeToolbar } from "@xyflow/react";
-import { ChangeEvent, useEffect, useRef } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { Box, chakra, Flex, Heading } from "@chakra-ui/react";
 import STORE_SELECTORS from "../../store/store";
+import type { AudioClipData } from "../../store/webAudio";
 import { FileInput, FileUploadRoot } from "../ui/file-upload";
 import ClipNodeWrapper from "./ClipNodeWrapper";
 import Waveform from "./Waveform";
 import type { AudioClipNodeType } from "./utils";
+
+type AudioClipData = {
+  file: File;
+  el: HTMLAudioElement;
+  srcNode: MediaElementAudioSourceNode;
+};
 
 export default function AudioClipNode({
   id,
@@ -14,32 +21,55 @@ export default function AudioClipNode({
 }: NodeProps<AudioClipNodeType>) {
   const ref = useRef<HTMLAudioElement>(null);
 
-  const updateAudioData = STORE_SELECTORS.updateAudioData();
+  // const initData = STORE_SELECTORS.initData();
+  // const updateData = STORE_SELECTORS.updateData();
+  // const getData = STORE_SELECTORS.getData();
+  const [data, setData] = useState<AudioClipData | null>(null);
+
+  const ctx = STORE_SELECTORS.ctx();
   const getOutputNodes = STORE_SELECTORS.getOutputNodes();
-  const initAudioData = STORE_SELECTORS.initAudioData();
+
   const play = STORE_SELECTORS.playNodeEl();
   const setIsPlaying = STORE_SELECTORS.setIsPlaying();
   const isPlaying = STORE_SELECTORS.isPlaying();
-  const nodeAudioData = STORE_SELECTORS.nodeAudioData();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInit, setIsInit] = useState(false);
+  console.log(isLoading, data);
 
   function onChange({ target: { files } }: ChangeEvent<HTMLInputElement>) {
-    const data = nodeAudioData.get(id);
     if (!ref.current || !data)
       return console.warn("AudioTrackNode: ref is null");
     if (!files || !files[0]) return console.warn("No file selected");
 
-    updateAudioData(id, {
-      ...data,
-      file: files[0],
-    });
+    setIsLoading(true);
+    // updateData(id, {
+    //   ...data,
+    //   file: files[0],
+    // });
+    setIsLoading(false);
   }
 
-  // Init audio objects on mount
+  // Init `srcNode` on mount
   useEffect(() => {
     const el = ref.current;
     if (!el) return console.warn("AudioTrackNode: ref is null");
 
-    initAudioData(id, el);
+    if (isInit) return;
+    setIsInit(true);
+
+    console.trace();
+    const srcNode = ctx.createMediaElementSource(el);
+    srcNode.connect(ctx.destination);
+
+    async () => {
+      setData({
+        file: new File([await (await fetch(el.src)).blob()], "init " + el.src),
+        el,
+        srcNode,
+      });
+    };
+    setIsLoading(false);
   }, [ref]);
 
   useEffect(() => {
@@ -74,8 +104,8 @@ export default function AudioClipNode({
         <Heading>{src}</Heading>
       </Flex>
       {/* <NodeResizer isVisible={selected} /> */}
-    <Box bg="bg">
-        <Waveform />
+      <Box bg="bg">
+        {!isLoading && data && <Waveform />}
         <chakra.audio
           ref={ref}
           id={id}
