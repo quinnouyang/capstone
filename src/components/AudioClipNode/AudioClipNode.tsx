@@ -62,13 +62,13 @@ export default function AudioClipNode({
     const srcNode = ctx.createMediaElementSource(el);
     srcNode.connect(ctx.destination);
 
-    async () => {
-      setData({
-        file: new File([await (await fetch(el.src)).blob()], "init " + el.src),
-        el,
-        srcNode,
-      });
-    };
+    // async () => {
+    //   setData({
+    //     file: new File([await (await fetch(el.src)).blob()], "init " + el.src),
+    //     el,
+    //     srcNode,
+    //   });
+    // };
     setIsLoading(false);
   }, [ref]);
 
