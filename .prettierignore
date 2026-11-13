@@ -1,5 +1,7 @@
 # Generated
 build
 coverage
+dist
+cache
 *-lock.*
 .eslintcache
