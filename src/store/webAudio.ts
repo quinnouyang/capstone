@@ -2,7 +2,7 @@ import { StateCreator } from "zustand";
 import type { ReactFlowSlice } from "./reactFlow";
 
 type AudioClipData = {
-  file: File;
+  file?: File;
   el: HTMLAudioElement;
   srcNode: MediaElementAudioSourceNode;
 };
@@ -77,7 +77,7 @@ export const createWebAudioSlice: StateCreator<
     },
 
     initAudioData: async (id: string, el: HTMLAudioElement) => {
-      // [BUG] We get some weird race condition where this gets called again on the same `el` before `await` blocking the `updateAudioData` resolves so we do a dumb check here to prevent that dumass from giving me an error and preventing me from graduatings dlkhfghalf
+      // React StrictMode can run initialization twice for the same element.
       if (get()._initElsBecauseOfSomeBullshitBug.has(el))
         return console.warn("Audio data already init", id);
 
@@ -90,13 +90,35 @@ export const createWebAudioSlice: StateCreator<
       const srcNode = get().ctx.createMediaElementSource(el);
       srcNode.connect(get().ctx.destination);
 
-      get().updateAudioData(id, {
-        file: new File([await (await fetch(el.src)).blob()], "init " + el.src),
-        el,
-        srcNode,
-      });
+      const data = { el, srcNode };
+      set(({ nodeAudioData }) => ({
+        nodeAudioData: new Map(nodeAudioData).set(id, data),
+      }));
+
+      if (!el.src) return;
+      try {
+        const response = await fetch(el.src);
+        if (!response.ok) throw Error(`Audio fetch failed: ${response.status}`);
+        const file = new File([await response.blob()], "init " + el.src);
+        // A file selected during the fetch must win over the initial source.
+        if (get().nodeAudioData.get(id) === data) {
+          set(({ nodeAudioData }) => ({
+            nodeAudioData: new Map(nodeAudioData).set(id, { ...data, file }),
+          }));
+        }
+      } catch (error) {
+        console.warn("Could not load initial audio file", id, error);
+      }
     },
     updateAudioData: (id: string, data: AudioClipData) => {
+      const previous = get().nodeAudioData.get(id);
+      if (data.file && data.file !== previous?.file) {
+        const previousSrc = get().getNode(id).data.src;
+        const src = URL.createObjectURL(data.file);
+        get().updateNodeInfo(id, { src });
+        data.el.src = src;
+        if (previousSrc?.startsWith("blob:")) URL.revokeObjectURL(previousSrc);
+      }
       set(({ nodeAudioData }) => ({
         nodeAudioData: new Map(nodeAudioData).set(id, {
           ...nodeAudioData.get(id),
