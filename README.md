@@ -4,13 +4,13 @@ will i graduate
 
 ## `devStart`
 
-this entire app is a [server-side-rendered](https://vite.dev/guide/ssr) (SSR) web application (React + TS via Vite), so use the standard Node/JS ecosystem. We have first-class `pnpm` support (see [`package.json`](/package.json) for scripts) but basic commands should work across package managers, e.g.
+For now, this is a [server-side-rendered](https://vite.dev/guide/ssr) (SSR) web app (React, TypeScript, and Vite). Use Node.js 18+ with any package manager (`npm`, `pnpm`, etc.) E.g.
 
 ```bash
-npm i[nstall]   # Install deps
-npm run dev     # Run dev server w/ hot reload
-npm run build   # Build prod server
-npm run preview # Run prod server
+npm install     # Install deps
+npm run dev     # Start dev server with hot reload
 ```
+
+Use your package manager's usual script command for `build` and `preview` as well.
 
 Our major deps are Chakra UI (UI primitives, prefer over vanilla HTML and CSS), XYFlow (graph/node UI), and Web Audio API.
