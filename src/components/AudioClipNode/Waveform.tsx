@@ -20,10 +20,10 @@ import STORE_SELECTORS from "../../store/store";
 type EventEmitter = Parameters<NonNullable<PeaksOptions["player"]>["init"]>[0];
 
 export default function Waveform() {
-  const id = useNodeId();
+  const id = useNodeId() || "";
   const zoomRef = useRef<HTMLElement>(undefined);
   const overviewRef = useRef<HTMLElement>(undefined);
-  const el = STORE_SELECTORS.nodeAudioData().get(id || "")?.el; // [FIX] Make a reactive getter
+  // const getData = STORE_SELECTORS.getData();
   const play = STORE_SELECTORS.playNodeEl();
   const [_, setPeaks] = useState<PeaksInstance | null>(null);
   const ctx = STORE_SELECTORS.ctx();
@@ -32,6 +32,8 @@ export default function Waveform() {
   const [isSeeking, setIsSeeking] = useState(false);
 
   useEffect(() => {
+    const el = getData(id).el;
+    console.log(el);
     if (!zoomRef || !overviewRef || !el)
       return console.warn(
         "At least this is null:",
@@ -105,9 +107,9 @@ export default function Waveform() {
         }),
       );
     })();
-  }, [id, ctx, zoomRef, overviewRef, el]);
+  }, [id, ctx, zoomRef, overviewRef]);
 
-  return el?.src ? (
+  return getData(id) ? (
     <>
       <Box ref={zoomRef} width="100%" height="320px"></Box>
       <Box ref={overviewRef} width="100%" height="80px"></Box>

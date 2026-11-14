@@ -11,8 +11,8 @@ type State = {
   ctx: AudioContext;
   isPlaying: boolean;
 
-  nodeAudioData: Map<string, AudioClipData>;
-  _initElsBecauseOfSomeBullshitBug: Set<HTMLAudioElement>;
+  // _nodeAudioData: Map<string, AudioClipData>;
+  // _initElsBecauseOfSomeBullshitBug: Set<HTMLAudioElement>;
 
   startingNodes: string[];
   enabledNodes: string[];
@@ -24,8 +24,9 @@ type Functions = {
   togglePlaying: () => void;
   playNodeEl: (id: string) => void;
 
-  initAudioData: (id: string, el: HTMLAudioElement) => void;
-  updateAudioData: (id: string, data: AudioClipData) => void;
+  // initData: (id: string, el: HTMLAudioElement) => Promise<AudioClipData>;
+  // updateData: (id: string, data: AudioClipData) => AudioClipData;
+  // getData: (id: string) => AudioClipData;
 
   addStarting: (id: string) => void;
   addEnabled: (id: string) => void;
@@ -52,8 +53,8 @@ export const createWebAudioSlice: StateCreator<
     ctx: _ctx,
     isPlaying: false,
 
-    nodeAudioData: new Map<string, AudioClipData>(),
-    _initElsBecauseOfSomeBullshitBug: new Set<HTMLAudioElement>(),
+    // _nodeAudioData: new Map<string, AudioClipData>(),
+    // _initElsBecauseOfSomeBullshitBug: new Set<HTMLAudioElement>(),
 
     startingNodes: [],
     enabledNodes: [],
@@ -71,7 +72,7 @@ export const createWebAudioSlice: StateCreator<
       if (firstId) get().playNodeEl(firstId);
     },
     playNodeEl: (id) => {
-      const el = get().nodeAudioData.get(id)?.el;
+      const el = get()._nodeAudioData.get(id)?.el;
       if (!el) return console.warn("Could not find audio source", id);
       el.play();
     },
@@ -81,14 +82,14 @@ export const createWebAudioSlice: StateCreator<
       if (get()._initElsBecauseOfSomeBullshitBug.has(el))
         return console.warn("Audio data already init", id);
 
-      set(({ _initElsBecauseOfSomeBullshitBug }) => ({
-        _initElsBecauseOfSomeBullshitBug: new Set(
-          _initElsBecauseOfSomeBullshitBug,
-        ).add(el),
-      }));
+      //   set(({ _initElsBecauseOfSomeBullshitBug }) => ({
+      //     _initElsBecauseOfSomeBullshitBug: new Set(
+      //       _initElsBecauseOfSomeBullshitBug,
+      //     ).add(el),
+      //   }));
 
-      const srcNode = get().ctx.createMediaElementSource(el);
-      srcNode.connect(get().ctx.destination);
+      //   const srcNode = get().ctx.createMediaElementSource(el);
+      //   srcNode.connect(get().ctx.destination);
 
       const data = { el, srcNode };
       set(({ nodeAudioData }) => ({
