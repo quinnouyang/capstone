@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [astro]
+    branches: [main, staging]
   pull_request:
-  workflow_dispatch:
+    branches: [main]
 
 permissions:
   contents: read
@@ -37,19 +37,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # - name: Run integration tests
-      #   run: pnpm test
-
-      - name: Build production site
+      - name: Build site
         run: pnpm build
-        env:
-          SITE_URL: https://capstone.quinnouyang.com
 
-      - name: Deploy to Cloudflare Workers
-        if: github.ref == 'refs/heads/capstone' && github.event_name != 'pull_request'
+      - name: Deploy production to Cloudflare Workers
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: 4.151.3
-          command: deploy
+          command: deploy --env production
+
+      - name: Deploy staging to Cloudflare Workers
+        if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: 4.151.3
+          command: deploy --env staging
