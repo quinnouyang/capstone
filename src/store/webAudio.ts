@@ -1,7 +1,7 @@
 import { StateCreator } from "zustand";
 import type { ReactFlowSlice } from "./reactFlow";
 
-type AudioClipData = {
+export type AudioClipData = {
   file?: File;
   el: HTMLAudioElement;
   srcNode: MediaElementAudioSourceNode;
@@ -10,9 +10,7 @@ type AudioClipData = {
 type State = {
   ctx: AudioContext;
   isPlaying: boolean;
-
-  // _nodeAudioData: Map<string, AudioClipData>;
-  // _initElsBecauseOfSomeBullshitBug: Set<HTMLAudioElement>;
+  nodeAudioData: Map<string, AudioClipData>;
 
   startingNodes: string[];
   enabledNodes: string[];
@@ -24,9 +22,9 @@ type Functions = {
   togglePlaying: () => void;
   playNodeEl: (id: string) => void;
 
-  // initData: (id: string, el: HTMLAudioElement) => Promise<AudioClipData>;
-  // updateData: (id: string, data: AudioClipData) => AudioClipData;
-  // getData: (id: string) => AudioClipData;
+  initAudioData: (id: string, el: HTMLAudioElement) => Promise<void>;
+  updateAudioData: (id: string, data: Partial<AudioClipData>) => void;
+  getAudioData: (id: string) => AudioClipData | undefined;
 
   addStarting: (id: string) => void;
   addEnabled: (id: string) => void;
@@ -40,6 +38,11 @@ type Functions = {
 
 export type WebAudioSlice = State & Functions;
 
+const sourceNodes = new WeakMap<
+  HTMLAudioElement,
+  MediaElementAudioSourceNode
+>();
+
 export const createWebAudioSlice: StateCreator<
   ReactFlowSlice & WebAudioSlice,
   [],
@@ -52,9 +55,7 @@ export const createWebAudioSlice: StateCreator<
   return {
     ctx: _ctx,
     isPlaying: false,
-
-    // _nodeAudioData: new Map<string, AudioClipData>(),
-    // _initElsBecauseOfSomeBullshitBug: new Set<HTMLAudioElement>(),
+    nodeAudioData: new Map(),
 
     startingNodes: [],
     enabledNodes: [],
@@ -72,25 +73,18 @@ export const createWebAudioSlice: StateCreator<
       if (firstId) get().playNodeEl(firstId);
     },
     playNodeEl: (id) => {
-      const el = get()._nodeAudioData.get(id)?.el;
+      const el = get().nodeAudioData.get(id)?.el;
       if (!el) return console.warn("Could not find audio source", id);
       el.play();
     },
 
     initAudioData: async (id: string, el: HTMLAudioElement) => {
-      // React StrictMode can run initialization twice for the same element.
-      if (get()._initElsBecauseOfSomeBullshitBug.has(el))
-        return console.warn("Audio data already init", id);
-
-      //   set(({ _initElsBecauseOfSomeBullshitBug }) => ({
-      //     _initElsBecauseOfSomeBullshitBug: new Set(
-      //       _initElsBecauseOfSomeBullshitBug,
-      //     ).add(el),
-      //   }));
-
-      //   const srcNode = get().ctx.createMediaElementSource(el);
-      //   srcNode.connect(get().ctx.destination);
-
+      let srcNode = sourceNodes.get(el);
+      if (!srcNode) {
+        srcNode = get().ctx.createMediaElementSource(el);
+        srcNode.connect(get().ctx.destination);
+        sourceNodes.set(el, srcNode);
+      }
       const data = { el, srcNode };
       set(({ nodeAudioData }) => ({
         nodeAudioData: new Map(nodeAudioData).set(id, data),
@@ -111,21 +105,22 @@ export const createWebAudioSlice: StateCreator<
         console.warn("Could not load initial audio file", id, error);
       }
     },
-    updateAudioData: (id: string, data: AudioClipData) => {
+    updateAudioData: (id: string, data: Partial<AudioClipData>) => {
       const previous = get().nodeAudioData.get(id);
-      if (data.file && data.file !== previous?.file) {
+      if (!previous) return;
+      const next = { ...previous, ...data };
+      if (next.file && next.file !== previous.file) {
         const previousSrc = get().getNode(id).data.src;
-        const src = URL.createObjectURL(data.file);
+        const src = URL.createObjectURL(next.file);
         get().updateNodeInfo(id, { src });
-        data.el.src = src;
+        next.el.src = src;
         if (previousSrc?.startsWith("blob:")) URL.revokeObjectURL(previousSrc);
       }
-      set(({ nodeAudioData }) => ({
-        nodeAudioData: new Map(nodeAudioData).set(id, {
-          ...nodeAudioData.get(id),
-          ...data,
-        }),
-      }));
+      set(({ nodeAudioData }) => {
+        return {
+          nodeAudioData: new Map(nodeAudioData).set(id, next),
+        };
+      });
     },
     getAudioData: (id: string) => {
       const data = get().nodeAudioData.get(id);

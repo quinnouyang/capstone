@@ -23,17 +23,17 @@ export default function Waveform() {
   const id = useNodeId() || "";
   const zoomRef = useRef<HTMLElement>(undefined);
   const overviewRef = useRef<HTMLElement>(undefined);
-  // const getData = STORE_SELECTORS.getData();
+  const nodeAudioData = STORE_SELECTORS.nodeAudioData();
   const play = STORE_SELECTORS.playNodeEl();
   const [_, setPeaks] = useState<PeaksInstance | null>(null);
   const ctx = STORE_SELECTORS.ctx();
   const isPlaying = STORE_SELECTORS.isPlaying();
   const [eventEmitter, setEventEmitter] = useState<EventEmitter | null>(null);
   const [isSeeking, setIsSeeking] = useState(false);
+  const audioData = nodeAudioData.get(id);
 
   useEffect(() => {
-    const el = getData(id).el;
-    console.log(el);
+    const el = audioData?.el;
     if (!zoomRef || !overviewRef || !el)
       return console.warn(
         "At least this is null:",
@@ -107,9 +107,9 @@ export default function Waveform() {
         }),
       );
     })();
-  }, [id, ctx, zoomRef, overviewRef]);
+  }, [id, audioData, ctx, zoomRef, overviewRef]);
 
-  return getData(id) ? (
+  return audioData ? (
     <>
       <Box ref={zoomRef} width="100%" height="320px"></Box>
       <Box ref={overviewRef} width="100%" height="80px"></Box>
