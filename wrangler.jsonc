@@ -1,0 +1,30 @@
+{
+  "name": "capstone",
+  "compatibility_date": "2026-11-13",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application" // https://developers.cloudflare.com/workers/static-assets/#routing-behavior
+  },
+  // https://developers.cloudflare.com/workers/wrangler/environments/#staging-and-production-environments
+  "env": {
+    "staging": {
+      "name": "capstone-staging",
+      "vars": {
+        "ENVIRONMENT": "staging"
+      },
+      "workers_dev": true
+    },
+    "production": {
+      "name": "capstone",
+      "vars": {
+        "ENVIRONMENT": "production"
+      },
+      "routes": [
+        {
+          "pattern": "capstone.quinnouyang.com",
+          "custom_domain": true
+        }
+      ]
+    }
+  }
+}
