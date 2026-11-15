@@ -1,3 +1,7 @@
+/**
+ * Handling waveform of audio clips. Includes UI + DSP functionality.
+ */
+
 import {
   Box,
   EmptyStateContent,

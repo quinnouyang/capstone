@@ -1,3 +1,7 @@
+/**
+ * Handling UI for audio clips (no DSP here)
+ */
+
 import { Box } from "@chakra-ui/react";
 import { Handle, Position } from "@xyflow/react";
 
