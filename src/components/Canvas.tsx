@@ -31,6 +31,7 @@ export default function Canvas() {
   const onConnect = STORE_SELECTORS.onConnect();
   const devtoolsOpen = STORE_SELECTORS.devtoolsOpen();
 
+  // TODO: Create a node when dragging and dropping an edge to empty canvas (shortcut to create a new node that is already connected to current)
   // const onConnectEnd = useCallback<OnConnectEnd>(
   //   (event, connectionState) => {
   //     // Skip if connection ends on a node (isValid) or no connection is in process (somehow)

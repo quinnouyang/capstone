@@ -24,16 +24,16 @@ type Functions = {
 
   initAudioData: (id: string, el: HTMLAudioElement) => Promise<void>;
   updateAudioData: (id: string, data: Partial<AudioClipData>) => void;
-  getAudioData: (id: string) => AudioClipData | undefined;
+  // getAudioData: (id: string) => AudioClipData | undefined;
 
-  addStarting: (id: string) => void;
-  addEnabled: (id: string) => void;
-  removeStarting: (id: string) => void;
-  removeEnabled: (id: string) => void;
-  clearStarting: () => void;
-  clearEnabled: () => void;
+  // addStarting: (id: string) => void;
+  // addEnabled: (id: string) => void;
+  // removeStarting: (id: string) => void;
+  // removeEnabled: (id: string) => void;
+  // clearStarting: () => void;
+  // clearEnabled: () => void;
 
-  refreshDuration: (time: number) => void;
+  // refreshDuration: (time: number) => void;
 };
 
 export type WebAudioSlice = State & Functions;
@@ -78,6 +78,7 @@ export const createWebAudioSlice: StateCreator<
       el.play();
     },
 
+    // TODO: Unslop me
     initAudioData: async (id: string, el: HTMLAudioElement) => {
       let srcNode = sourceNodes.get(el);
       if (!srcNode) {
@@ -105,6 +106,7 @@ export const createWebAudioSlice: StateCreator<
         console.warn("Could not load initial audio file", id, error);
       }
     },
+    // TODO: Unslop me
     updateAudioData: (id: string, data: Partial<AudioClipData>) => {
       const previous = get().nodeAudioData.get(id);
       if (!previous) return;
@@ -122,41 +124,41 @@ export const createWebAudioSlice: StateCreator<
         };
       });
     },
-    getAudioData: (id: string) => {
-      const data = get().nodeAudioData.get(id);
-      if (!data) console.warn(`Could not find audio data of ID ${id}`);
-      return data;
-    },
+    // getAudioData: (id: string) => {
+    //   const data = get().nodeAudioData.get(id);
+    //   if (!data) console.warn(`Could not find audio data of ID ${id}`);
+    //   return data;
+    // },
 
-    addStarting: (id) => {
-      set((state) => ({
-        startingNodes: [...state.startingNodes, id],
-      }));
-    },
-    addEnabled: (id) => {
-      set((state) => ({
-        enabledNodes: [...state.enabledNodes, id],
-      }));
-    },
-    removeStarting: (id) => {
-      set((state) => ({
-        startingNodes: state.startingNodes.filter((_id) => _id !== id),
-      }));
-    },
-    removeEnabled: (id) => {
-      set((state) => ({
-        enabledNodes: state.enabledNodes.filter((_id) => _id !== id),
-      }));
-    },
-    clearStarting: () => {
-      set(() => ({ startingNodes: [] }));
-    },
-    clearEnabled: () => {
-      set(() => ({ enabledNodes: [] }));
-    },
+    // addStarting: (id) => {
+    //   set((state) => ({
+    //     startingNodes: [...state.startingNodes, id],
+    //   }));
+    // },
+    // addEnabled: (id) => {
+    //   set((state) => ({
+    //     enabledNodes: [...state.enabledNodes, id],
+    //   }));
+    // },
+    // removeStarting: (id) => {
+    //   set((state) => ({
+    //     startingNodes: state.startingNodes.filter((_id) => _id !== id),
+    //   }));
+    // },
+    // removeEnabled: (id) => {
+    //   set((state) => ({
+    //     enabledNodes: state.enabledNodes.filter((_id) => _id !== id),
+    //   }));
+    // },
+    // clearStarting: () => {
+    //   set(() => ({ startingNodes: [] }));
+    // },
+    // clearEnabled: () => {
+    //   set(() => ({ enabledNodes: [] }));
+    // },
 
-    refreshDuration: () => {
-      set({ duration: 0 }); // [TODO] Calculate longest traversal duration...
-    },
+    // refreshDuration: () => {
+    //   set({ duration: 0 }); // [TODO] Calculate longest traversal duration...
+    // },
   };
 };

@@ -1,9 +1,13 @@
+// Probably needs to be in a store
 const ids: Set<string> = new Set<string>();
 
 function genUuid(len = 4) {
   return self.crypto.randomUUID().slice(0, len + 1);
 }
 
+/**
+ * Generates a human-readable ID by joining args, appending a random suffix in case dup (this would be a bug?)
+ */
 export function genId(idx: number, name: string, suffix?: string): string {
   const id = [name, idx, suffix].join(" ").trim();
 
@@ -16,6 +20,6 @@ export function genId(idx: number, name: string, suffix?: string): string {
   return id;
 }
 
-export function formatTimestamp(seconds: number): string {
-  return `${Math.floor(Number(seconds / 60))}:${Math.ceil(seconds % 60)}`;
-}
+// export function formatTimestamp(seconds: number): string {
+//   return `${Math.floor(Number(seconds / 60))}:${Math.ceil(seconds % 60)}`;
+// }

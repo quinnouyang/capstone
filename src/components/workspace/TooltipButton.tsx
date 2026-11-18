@@ -2,6 +2,7 @@ import { IconButton, type IconButtonProps } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 import { Tooltip } from "../ui/tooltip";
 
+// File upload tooltip
 export default function TooltipButton({
   children,
   label,
