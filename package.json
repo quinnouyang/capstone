@@ -3,16 +3,19 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "compile": "tsc -b tsconfig.json",
-    "compile-v": "pnpm run compile --verbose --listFiles",
+    "compile-v": "tsc -b tsconfig.json --verbose --listFiles",
     "lint": "eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache",
-    "lint-v": "pnpm run lint --debug",
+    "lint-v": "eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache --debug",
     "_format": "prettier . --cache --cache-location cache/.prettier-cache",
-    "format": "pnpm run _format --list-different --write",
-    "format-v": "pnpm run _format --log-level debug --write",
-    "all": "pnpm run compile && pnpm run lint && pnpm run format",
-    "all-v": "pnpm run compile-v && pnpm run lint-v && pnpm run format-v",
+    "format": "prettier . --cache --cache-location cache/.prettier-cache --list-different --write",
+    "format-v": "prettier . --cache --cache-location cache/.prettier-cache --log-level debug --write",
+    "all": "tsc -b tsconfig.json && eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache && prettier . --cache --cache-location cache/.prettier-cache --list-different --write",
+    "all-v": "tsc -b tsconfig.json --verbose --listFiles && eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache --debug && prettier . --cache --cache-location cache/.prettier-cache --log-level debug --write",
     "build": "vite build -c configs/vite.config.ts",
     "dev": "vite -c configs/vite.config.ts",
     "preview": "vite preview"
@@ -48,10 +51,5 @@
     "typescript-eslint": "^8.31.1",
     "vite": "^6.3.4",
     "vite-tsconfig-paths": "^5.1.4"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
   }
 }

@@ -1,18 +1,16 @@
 import { StateCreator } from "zustand";
 import type { ReactFlowSlice } from "./reactFlow";
 
-// type AudioClipData = {
-//   file: File;
-//   el: HTMLAudioElement;
-//   srcNode: MediaElementAudioSourceNode;
-// };
+export type AudioClipData = {
+  file?: File;
+  el: HTMLAudioElement;
+  srcNode: MediaElementAudioSourceNode;
+};
 
 type State = {
   ctx: AudioContext;
   isPlaying: boolean;
-
-  // _nodeAudioData: Map<string, AudioClipData>;
-  // _initElsBecauseOfSomeBullshitBug: Set<HTMLAudioElement>;
+  nodeAudioData: Map<string, AudioClipData>;
 
   startingNodes: string[];
   enabledNodes: string[];
@@ -24,9 +22,9 @@ type Functions = {
   togglePlaying: () => void;
   playNodeEl: (id: string) => void;
 
-  // initData: (id: string, el: HTMLAudioElement) => Promise<AudioClipData>;
-  // updateData: (id: string, data: AudioClipData) => AudioClipData;
-  // getData: (id: string) => AudioClipData;
+  initAudioData: (id: string, el: HTMLAudioElement) => Promise<void>;
+  updateAudioData: (id: string, data: Partial<AudioClipData>) => void;
+  getAudioData: (id: string) => AudioClipData | undefined;
 
   addStarting: (id: string) => void;
   addEnabled: (id: string) => void;
@@ -40,6 +38,11 @@ type Functions = {
 
 export type WebAudioSlice = State & Functions;
 
+const sourceNodes = new WeakMap<
+  HTMLAudioElement,
+  MediaElementAudioSourceNode
+>();
+
 export const createWebAudioSlice: StateCreator<
   ReactFlowSlice & WebAudioSlice,
   [],
@@ -52,9 +55,7 @@ export const createWebAudioSlice: StateCreator<
   return {
     ctx: _ctx,
     isPlaying: false,
-
-    // _nodeAudioData: new Map<string, AudioClipData>(),
-    // _initElsBecauseOfSomeBullshitBug: new Set<HTMLAudioElement>(),
+    nodeAudioData: new Map(),
 
     startingNodes: [],
     enabledNodes: [],
@@ -72,58 +73,60 @@ export const createWebAudioSlice: StateCreator<
       if (firstId) get().playNodeEl(firstId);
     },
     playNodeEl: (id) => {
-      const el = get()._nodeAudioData.get(id)?.el;
+      const el = get().nodeAudioData.get(id)?.el;
       if (!el) return console.warn("Could not find audio source", id);
       el.play();
     },
 
-    // initData: async (id: string, el: HTMLAudioElement) => {
-    //   // [BUG] We get some weird race condition where this gets called again on the same `el` before `await` blocking the `updateAudioData` resolves so we do a dumb check here to prevent that dumass from giving me an error and preventing me from graduatings dlkhfghalf
-    //   if (get()._initElsBecauseOfSomeBullshitBug.has(el))
-    //     return console.warn("Audio data already init", id);
+    initAudioData: async (id: string, el: HTMLAudioElement) => {
+      let srcNode = sourceNodes.get(el);
+      if (!srcNode) {
+        srcNode = get().ctx.createMediaElementSource(el);
+        srcNode.connect(get().ctx.destination);
+        sourceNodes.set(el, srcNode);
+      }
+      const data = { el, srcNode };
+      set(({ nodeAudioData }) => ({
+        nodeAudioData: new Map(nodeAudioData).set(id, data),
+      }));
 
-    //   set(({ _initElsBecauseOfSomeBullshitBug }) => ({
-    //     _initElsBecauseOfSomeBullshitBug: new Set(
-    //       _initElsBecauseOfSomeBullshitBug,
-    //     ).add(el),
-    //   }));
-
-    //   const srcNode = get().ctx.createMediaElementSource(el);
-    //   srcNode.connect(get().ctx.destination);
-
-    //   return get().updateData(id, {
-    //     file: new File([await (await fetch(el.src)).blob()], "init " + el.src),
-    //     el,
-    //     srcNode,
-    //   });
-    // },
-    // updateData: (id: string, data: AudioClipData) => {
-    //   console.log("UPDATING");
-    //   console.log(get()._nodeAudioData);
-
-    //   set(({ _nodeAudioData: nodeAudioData }) => ({
-    //     _nodeAudioData: new Map(nodeAudioData).set(id, {
-    //       ...nodeAudioData.get(id),
-    //       ...data,
-    //     }),
-    //   }));
-
-    //   console.log(get()._nodeAudioData);
-
-    //   return get().getData(id);
-    // },
-    // getData: (id: string) => {
-    //   const data = get()._nodeAudioData.get(id);
-    //   if (!data) {
-    //     console.warn(
-    //       `Could not find audio data of ID ${id}`,
-    //       get()._nodeAudioData,
-    //     );
-    //     console.trace();
-    //   }
-
-    //   return data;
-    // },
+      if (!el.src) return;
+      try {
+        const response = await fetch(el.src);
+        if (!response.ok) throw Error(`Audio fetch failed: ${response.status}`);
+        const file = new File([await response.blob()], "init " + el.src);
+        // A file selected during the fetch must win over the initial source.
+        if (get().nodeAudioData.get(id) === data) {
+          set(({ nodeAudioData }) => ({
+            nodeAudioData: new Map(nodeAudioData).set(id, { ...data, file }),
+          }));
+        }
+      } catch (error) {
+        console.warn("Could not load initial audio file", id, error);
+      }
+    },
+    updateAudioData: (id: string, data: Partial<AudioClipData>) => {
+      const previous = get().nodeAudioData.get(id);
+      if (!previous) return;
+      const next = { ...previous, ...data };
+      if (next.file && next.file !== previous.file) {
+        const previousSrc = get().getNode(id).data.src;
+        const src = URL.createObjectURL(next.file);
+        get().updateNodeInfo(id, { src });
+        next.el.src = src;
+        if (previousSrc?.startsWith("blob:")) URL.revokeObjectURL(previousSrc);
+      }
+      set(({ nodeAudioData }) => {
+        return {
+          nodeAudioData: new Map(nodeAudioData).set(id, next),
+        };
+      });
+    },
+    getAudioData: (id: string) => {
+      const data = get().nodeAudioData.get(id);
+      if (!data) console.warn(`Could not find audio data of ID ${id}`);
+      return data;
+    },
 
     addStarting: (id) => {
       set((state) => ({
