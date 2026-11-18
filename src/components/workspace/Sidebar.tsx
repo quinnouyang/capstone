@@ -10,6 +10,7 @@ export default function Sidebar() {
     <Box
       position="absolute"
       h="full"
+      maxW={400}
       bg="bg.panel"
       shadow={sidebarOpen ? "md" : undefined}
       transform={sidebarOpen ? "translateX(0)" : "translateX(-100%)"}

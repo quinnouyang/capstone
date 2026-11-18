@@ -3,6 +3,7 @@
  * Utilizes web audio to create audio functionality (see WebAudioSlice) and
  * React for UI (see ReactFlowSlice).
  */
+
 import { NodeProps, NodeToolbar } from "@xyflow/react";
 import { useEffect, useRef } from "react";
 
@@ -28,12 +29,13 @@ export default function AudioClipNode({
   const initAudioData = STORE_SELECTORS.initAudioData();
   const updateAudioData = STORE_SELECTORS.updateAudioData();
   const nodeAudioData = STORE_SELECTORS.nodeAudioData();
-  const getOutputNodes = STORE_SELECTORS.getOutputNodes();
+  // const getOutputNodes = STORE_SELECTORS.getOutputNodes();
 
   const play = STORE_SELECTORS.playNodeEl();
   const setIsPlaying = STORE_SELECTORS.setIsPlaying();
   const isPlaying = STORE_SELECTORS.isPlaying();
 
+  // File change
   function onChange({ acceptedFiles: files }: FileUploadFileChangeDetails) {
     const data = nodeAudioData.get(id);
 
@@ -52,22 +54,24 @@ export default function AudioClipNode({
     void initAudioData(id, el);
   }, [id, initAudioData]);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return console.warn("AudioTrackNode: ref is null");
+  // TODO: Figure out why we needed this event listener
+  // useEffect(() => {
+  //   const el = ref.current;
+  //   if (!el) return console.warn("AudioTrackNode: ref is null");
 
-    const onEnded = () => {
-      getOutputNodes(id).forEach(({ id }) => {
-        play(id);
-      });
-    };
-    el.addEventListener("ended", onEnded);
+  //   const onEnded = () => {
+  //     getOutputNodes(id).forEach(({ id }) => {
+  //       play(id);
+  //     });
+  //   };
+  //   el.addEventListener("ended", onEnded);
 
-    return () => {
-      el.removeEventListener("ended", onEnded);
-    };
-  }, [ref, getOutputNodes]);
+  //   return () => {
+  //     el.removeEventListener("ended", onEnded);
+  //   };
+  // }, [ref, getOutputNodes]);
 
+  // // Pause node if global isPlaying false (pausing one node pauses others)
   useEffect(() => {
     const el = ref.current;
     if (!el) return console.warn("AudioTrackNode: ref is null");
@@ -81,12 +85,12 @@ export default function AudioClipNode({
         <Heading>{src}</Heading>
       </Flex>
       {/* <NodeResizer isVisible={selected} /> */}
-      <Box bg="bg">
-        <Waveform />
+      <Box bg="bg" minW={400}>
         <chakra.audio
           ref={ref}
           id={id}
           controls
+          w={"full"}
           src={src}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}

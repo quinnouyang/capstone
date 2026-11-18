@@ -46,18 +46,19 @@ export default function Toolbar() {
         {/* <TooltipButton label="Stop" onClick={() => {}}>
           <BiStop />
         </TooltipButton> */}
-        <TooltipButton label="Go to Start" onClick={() => {}}>
+        {/* <TooltipButton label="Go to Start" onClick={() => {}}>
           <BiRewind />
-        </TooltipButton>
-        <TooltipButton label="Go to End" onClick={() => {}}>
+        </TooltipButton> */}
+        {/* <TooltipButton label="Go to End" onClick={() => {}}>
           <BiFastForward />
-        </TooltipButton>
+        </TooltipButton> */}
         {/* <TooltipButton label="Repeat" onClick={() => {}}>
           <BiRepeat />
         </TooltipButton> */}
 
         <VerticalSeparator />
 
+        {/* TODO: Un-slop me */}
         <PlaybackTime />
       </HStack>
 
