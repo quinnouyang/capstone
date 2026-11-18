@@ -1,6 +1,6 @@
 /**
  * Implements audio clip nodes in graph.
- * Utilizes web audio to create audio functionality (see WebAudioSlice) and 
+ * Utilizes web audio to create audio functionality (see WebAudioSlice) and
  * React for UI (see ReactFlowSlice).
  */
 import { NodeProps, NodeToolbar } from "@xyflow/react";
