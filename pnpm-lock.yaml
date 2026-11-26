@@ -191,8 +191,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-icons:
-        specifier: ^5.5.0
-        version: 5.5.0(react@19.1.0)
+        specifier: ^5.7.0
+        version: 5.7.0(react@19.1.0)
       waveform-data:
         specifier: ^4.5.1
         version: 4.5.1
@@ -2121,8 +2121,8 @@ packages:
     peerDependencies:
       react: ^19.1.0
 
-  react-icons@5.5.0:
-    resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
+  react-icons@5.7.0:
+    resolution: {integrity: sha512-LBLy340Rzqy6+/yVhZKT3B/QpP1BZaesGqasf09HPOBzRarcDIFH0WwXlXQfE7q7ipxK4MSiC5DIBWURCny6fw==}
     peerDependencies:
       react: '*'
 
@@ -4800,7 +4800,7 @@ snapshots:
       react: 19.1.0
       scheduler: 0.26.0
 
-  react-icons@5.5.0(react@19.1.0):
+  react-icons@5.7.0(react@19.1.0):
     dependencies:
       react: 19.1.0
 
