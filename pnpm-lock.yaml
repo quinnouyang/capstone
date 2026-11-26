@@ -207,8 +207,8 @@ importers:
         specifier: ^9.26.0
         version: 9.26.0
       '@redux-devtools/extension':
-        specifier: ^3.3.0
-        version: 3.3.0(redux@5.0.1)
+        specifier: ^4.0.1
+        version: 4.0.1(redux@5.0.1)
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
@@ -684,8 +684,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@redux-devtools/extension@3.3.0':
-    resolution: {integrity: sha512-X34S/rC8S/M1BIrkYD1mJ5f8vlH0BDqxXrs96cvxSBo4FhMdbhU+GUGsmNYov1xjSyLMHgo8NYrUG8bNX7525g==}
+  '@redux-devtools/extension@4.0.1':
+    resolution: {integrity: sha512-XlOnGtsaZgL70JY08ijurR+jCZPu0YVgPgHA5gaOlx3qssMmiV1InRVip39i9C7kVW6v/VfLxLs7YLyZFd7QrQ==}
     peerDependencies:
       redux: ^3.1.0 || ^4.0.0 || ^5.0.0
 
@@ -1746,9 +1746,6 @@ packages:
   ignore@7.0.4:
     resolution: {integrity: sha512-gJzzk+PQNznz8ysRrC0aOkBNVRBDtE1n53IqyqEf3PXrYwomFs5q4pGMizBMJF+ykh03insJ27hB8gSrD2Hn8A==}
     engines: {node: '>= 4'}
-
-  immutable@4.3.7:
-    resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -3087,10 +3084,8 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@redux-devtools/extension@3.3.0(redux@5.0.1)':
+  '@redux-devtools/extension@4.0.1(redux@5.0.1)':
     dependencies:
-      '@babel/runtime': 7.27.1
-      immutable: 4.3.7
       redux: 5.0.1
 
   '@rollup/rollup-android-arm-eabi@4.40.1':
@@ -4502,8 +4497,6 @@ snapshots:
   ignore@5.3.2: {}
 
   ignore@7.0.4: {}
-
-  immutable@4.3.7: {}
 
   import-fresh@3.3.1:
     dependencies:
