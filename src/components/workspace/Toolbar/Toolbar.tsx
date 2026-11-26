@@ -2,9 +2,7 @@ import { Flex, HStack, Separator } from "@chakra-ui/react";
 import { useReactFlow } from "@xyflow/react";
 import {
   BiCodeAlt,
-  BiFastForward,
   BiFullscreen,
-  BiRewind,
   BiSidebar,
   BiZoomIn,
   BiZoomOut,

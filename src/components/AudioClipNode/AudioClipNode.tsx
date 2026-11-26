@@ -17,7 +17,6 @@ import {
 import STORE_SELECTORS from "../../store/store";
 import { FileInput, FileUploadRoot } from "../ui/file-upload";
 import ClipNodeWrapper from "./ClipNodeWrapper";
-import Waveform from "./Waveform";
 import type { AudioClipNodeType } from "./utils";
 
 export default function AudioClipNode({
@@ -31,7 +30,6 @@ export default function AudioClipNode({
   const nodeAudioData = STORE_SELECTORS.nodeAudioData();
   // const getOutputNodes = STORE_SELECTORS.getOutputNodes();
 
-  const play = STORE_SELECTORS.playNodeEl();
   const setIsPlaying = STORE_SELECTORS.setIsPlaying();
   const isPlaying = STORE_SELECTORS.isPlaying();
 
@@ -76,7 +74,7 @@ export default function AudioClipNode({
     const el = ref.current;
     if (!el) return console.warn("AudioTrackNode: ref is null");
 
-    !isPlaying && el.pause();
+    if (!isPlaying) el.pause();
   }, [ref, isPlaying]);
 
   return (

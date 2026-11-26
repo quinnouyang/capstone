@@ -54,7 +54,7 @@ type EdgeInfoProps = {
   type: string;
   selected: boolean;
   position: XYPosition;
-  data: any;
+  data: unknown;
 };
 
 function EdgeInfo({

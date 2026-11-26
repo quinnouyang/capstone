@@ -4,21 +4,25 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=24 <25"
   },
   "scripts": {
     "compile": "tsc -b tsconfig.json",
     "compile-v": "tsc -b tsconfig.json --verbose --listFiles",
-    "lint": "eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache",
+    "lint": "eslint -c configs/eslint.config.js src --cache --cache-location cache/.eslintcache",
     "lint-v": "eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache --debug",
     "_format": "prettier . --cache --cache-location cache/.prettier-cache",
     "format": "prettier . --cache --cache-location cache/.prettier-cache --list-different --write",
     "format-v": "prettier . --cache --cache-location cache/.prettier-cache --log-level debug --write",
-    "all": "tsc -b tsconfig.json && eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache && prettier . --cache --cache-location cache/.prettier-cache --list-different --write",
+    "all": "pnpm check",
     "all-v": "tsc -b tsconfig.json --verbose --listFiles && eslint -c configs/eslint.config.js --cache --cache-location cache/.eslintcache --debug && prettier . --cache --cache-location cache/.prettier-cache --log-level debug --write",
     "build": "vite build -c configs/vite.config.ts",
     "dev": "vite -c configs/vite.config.ts",
-    "preview": "vite preview"
+    "preview": "vite preview -c configs/vite.config.ts",
+    "format:check": "prettier . --check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "pnpm compile && pnpm lint && pnpm format:check && pnpm test"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.17.0",
@@ -50,6 +54,8 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.31.1",
     "vite": "^6.3.4",
-    "vite-tsconfig-paths": "^5.1.4"
-  }
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.7"
+  },
+  "packageManager": "pnpm@12.18.0"
 }
