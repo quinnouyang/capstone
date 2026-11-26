@@ -25,7 +25,7 @@
     "check": "pnpm compile && pnpm lint && pnpm format:check && pnpm test"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.17.0",
+    "@chakra-ui/react": "^3.38.0",
     "@emotion/react": "^11.14.0",
     "@xyflow/react": "^12.6.0",
     "konva": "^9.3.20",
