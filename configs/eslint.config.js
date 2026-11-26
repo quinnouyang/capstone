@@ -14,12 +14,8 @@ export default tseslint.config(
     },
   },
   {
-    files: ["../src"],
-    extends: [
-      js.configs.recommended,
-      ...tseslint.configs.strictTypeChecked,
-      ...tseslint.configs.stylisticTypeChecked,
-    ],
+    files: ["src/**/*.{ts,tsx}"],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

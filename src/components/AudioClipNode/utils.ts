@@ -20,7 +20,6 @@ export function initNode(
     id: genId(idx, "node"),
     position,
     data: {
-      name: name || src || `Audio Clip ${idx}`,
       src,
     },
     type: "audioTrackNode",

@@ -47,7 +47,7 @@ type NodeInfoProps = {
   absPosition: XYPosition;
   width?: number;
   height?: number;
-  data: any;
+  data: unknown;
 };
 
 function NodeInfo({
